@@ -1,0 +1,765 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		272BB91E2A8B7C4900A8788A /* HorizontalWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */; };
+		27661B6A2A8B8381005D07C9 /* AddMedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27661B692A8B8381005D07C9 /* AddMedView.swift */; };
+		2794FE9C2A88BD8400579592 /* IV_DripApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FE9B2A88BD8400579592 /* IV_DripApp.swift */; };
+		2794FE9E2A88BD8400579592 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FE9D2A88BD8400579592 /* ContentView.swift */; };
+		2794FEA02A88BD8700579592 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2794FE9F2A88BD8700579592 /* Assets.xcassets */; };
+		2794FEA32A88BD8700579592 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2794FEA22A88BD8700579592 /* Preview Assets.xcassets */; };
+		2794FEA52A88BD8700579592 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEA42A88BD8700579592 /* Persistence.swift */; };
+		2794FEA82A88BD8700579592 /* IV_Drip.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEA62A88BD8700579592 /* IV_Drip.xcdatamodeld */; };
+		2794FEB22A88BD8800579592 /* IV_DripTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEB12A88BD8800579592 /* IV_DripTests.swift */; };
+		2794FEBC2A88BD8800579592 /* IV_DripUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEBB2A88BD8800579592 /* IV_DripUITests.swift */; };
+		2794FEBE2A88BD8800579592 /* IV_DripUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEBD2A88BD8800579592 /* IV_DripUITestsLaunchTests.swift */; };
+		2794FECD2A88BE7E00579592 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FECC2A88BE7E00579592 /* Constants.swift */; };
+		2794FECF2A88BE8C00579592 /* DecimalWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FECE2A88BE8C00579592 /* DecimalWheelPicker.swift */; };
+		2794FED12A88BF1600579592 /* DecimalInputRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FED02A88BF1600579592 /* DecimalInputRowView.swift */; };
+		2794FED32A88C38C00579592 /* IntWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FED22A88C38C00579592 /* IntWheelPicker.swift */; };
+		2794FED52A88C50F00579592 /* IntInputRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FED42A88C50F00579592 /* IntInputRowView.swift */; };
+		2794FED72A88D12600579592 /* NavigationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FED62A88D12600579592 /* NavigationModel.swift */; };
+		2794FED92A88D23700579592 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FED82A88D23700579592 /* HomeView.swift */; };
+		2794FEDB2A88D3DC00579592 /* CalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEDA2A88D3DC00579592 /* CalculatorView.swift */; };
+		2794FEDD2A88E2E500579592 /* WeightPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEDC2A88E2E500579592 /* WeightPicker.swift */; };
+		2794FEE12A88E45100579592 /* DrugWeightRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEE02A88E45100579592 /* DrugWeightRowView.swift */; };
+		2794FEE32A88E6A900579592 /* InfusionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEE22A88E6A900579592 /* InfusionRowView.swift */; };
+		2794FEE52A88E83B00579592 /* ConcentrationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEE42A88E83B00579592 /* ConcentrationRowView.swift */; };
+		2794FEE72A88E9A100579592 /* VolumeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEE62A88E9A100579592 /* VolumeRowView.swift */; };
+		2794FEE92A8924A400579592 /* MySolutionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FEE82A8924A400579592 /* MySolutionsView.swift */; };
+		27A3F5BC2A94BD620007BC7C /* CustomSolutionMyMedsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BB2A94BD620007BC7C /* CustomSolutionMyMedsView.swift */; };
+		27A3F5BE2A94BDA10007BC7C /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */; };
+		27A3F5C02A9564D90007BC7C /* AmpouleNumberRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */; };
+		27A3F5C32A960E730007BC7C /* InfusionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */; };
+		27B0DD732A8974D300C69474 /* AddCustomSolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */; };
+		27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD742A89763600C69474 /* LayoutExtensions.swift */; };
+		27B46D4F2A988FA5008101C5 /* SolutionListTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */; };
+		27B46D512A989CD1008101C5 /* MySolutionCalculatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */; };
+		27B46D532A98BAF3008101C5 /* PushDoseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */; };
+		27D960D82A8CC317002121F3 /* DBBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D960D72A8CC317002121F3 /* DBBrain.swift */; };
+		27D960DA2A8CC7DB002121F3 /* MyMedDoseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D960D92A8CC7DB002121F3 /* MyMedDoseRowView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2794FEAE2A88BD8800579592 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2794FE902A88BD8400579592 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2794FE972A88BD8400579592;
+			remoteInfo = "IV Drip";
+		};
+		2794FEB82A88BD8800579592 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2794FE902A88BD8400579592 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2794FE972A88BD8400579592;
+			remoteInfo = "IV Drip";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalWheelPicker.swift; sourceTree = "<group>"; };
+		27661B692A8B8381005D07C9 /* AddMedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMedView.swift; sourceTree = "<group>"; };
+		2794FE982A88BD8400579592 /* IV Drip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IV Drip.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2794FE9B2A88BD8400579592 /* IV_DripApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IV_DripApp.swift; sourceTree = "<group>"; };
+		2794FE9D2A88BD8400579592 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2794FE9F2A88BD8700579592 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2794FEA22A88BD8700579592 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		2794FEA42A88BD8700579592 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		2794FEA72A88BD8700579592 /* IV_Drip.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IV_Drip.xcdatamodel; sourceTree = "<group>"; };
+		2794FEAD2A88BD8800579592 /* IV DripTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IV DripTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2794FEB12A88BD8800579592 /* IV_DripTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IV_DripTests.swift; sourceTree = "<group>"; };
+		2794FEB72A88BD8800579592 /* IV DripUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "IV DripUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2794FEBB2A88BD8800579592 /* IV_DripUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IV_DripUITests.swift; sourceTree = "<group>"; };
+		2794FEBD2A88BD8800579592 /* IV_DripUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IV_DripUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		2794FECC2A88BE7E00579592 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		2794FECE2A88BE8C00579592 /* DecimalWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalWheelPicker.swift; sourceTree = "<group>"; };
+		2794FED02A88BF1600579592 /* DecimalInputRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecimalInputRowView.swift; sourceTree = "<group>"; };
+		2794FED22A88C38C00579592 /* IntWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntWheelPicker.swift; sourceTree = "<group>"; };
+		2794FED42A88C50F00579592 /* IntInputRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntInputRowView.swift; sourceTree = "<group>"; };
+		2794FED62A88D12600579592 /* NavigationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationModel.swift; sourceTree = "<group>"; };
+		2794FED82A88D23700579592 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		2794FEDA2A88D3DC00579592 /* CalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorView.swift; sourceTree = "<group>"; };
+		2794FEDC2A88E2E500579592 /* WeightPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightPicker.swift; sourceTree = "<group>"; };
+		2794FEE02A88E45100579592 /* DrugWeightRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrugWeightRowView.swift; sourceTree = "<group>"; };
+		2794FEE22A88E6A900579592 /* InfusionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfusionRowView.swift; sourceTree = "<group>"; };
+		2794FEE42A88E83B00579592 /* ConcentrationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcentrationRowView.swift; sourceTree = "<group>"; };
+		2794FEE62A88E9A100579592 /* VolumeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeRowView.swift; sourceTree = "<group>"; };
+		2794FEE82A8924A400579592 /* MySolutionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySolutionsView.swift; sourceTree = "<group>"; };
+		27A3F5BB2A94BD620007BC7C /* CustomSolutionMyMedsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSolutionMyMedsView.swift; sourceTree = "<group>"; };
+		27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
+		27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmpouleNumberRowView.swift; sourceTree = "<group>"; };
+		27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfusionCalculator.swift; sourceTree = "<group>"; };
+		27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomSolutionView.swift; sourceTree = "<group>"; };
+		27B0DD742A89763600C69474 /* LayoutExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutExtensions.swift; sourceTree = "<group>"; };
+		27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionListTileView.swift; sourceTree = "<group>"; };
+		27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySolutionCalculatorView.swift; sourceTree = "<group>"; };
+		27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDoseRowView.swift; sourceTree = "<group>"; };
+		27D960D72A8CC317002121F3 /* DBBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBBrain.swift; sourceTree = "<group>"; };
+		27D960D92A8CC7DB002121F3 /* MyMedDoseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMedDoseRowView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2794FE952A88BD8400579592 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEAA2A88BD8800579592 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEB42A88BD8800579592 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2794FE8F2A88BD8400579592 = {
+			isa = PBXGroup;
+			children = (
+				2794FE9A2A88BD8400579592 /* IV Drip */,
+				2794FEB02A88BD8800579592 /* IV DripTests */,
+				2794FEBA2A88BD8800579592 /* IV DripUITests */,
+				2794FE992A88BD8400579592 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2794FE992A88BD8400579592 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2794FE982A88BD8400579592 /* IV Drip.app */,
+				2794FEAD2A88BD8800579592 /* IV DripTests.xctest */,
+				2794FEB72A88BD8800579592 /* IV DripUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2794FE9A2A88BD8400579592 /* IV Drip */ = {
+			isa = PBXGroup;
+			children = (
+				2794FE9B2A88BD8400579592 /* IV_DripApp.swift */,
+				2794FE9D2A88BD8400579592 /* ContentView.swift */,
+				2794FECB2A88BE1100579592 /* View */,
+				2794FECA2A88BE0700579592 /* Model */,
+				2794FE9F2A88BD8700579592 /* Assets.xcassets */,
+				2794FEA42A88BD8700579592 /* Persistence.swift */,
+				2794FEA62A88BD8700579592 /* IV_Drip.xcdatamodeld */,
+				2794FEA12A88BD8700579592 /* Preview Content */,
+			);
+			path = "IV Drip";
+			sourceTree = "<group>";
+		};
+		2794FEA12A88BD8700579592 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				2794FEA22A88BD8700579592 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2794FEB02A88BD8800579592 /* IV DripTests */ = {
+			isa = PBXGroup;
+			children = (
+				2794FEB12A88BD8800579592 /* IV_DripTests.swift */,
+			);
+			path = "IV DripTests";
+			sourceTree = "<group>";
+		};
+		2794FEBA2A88BD8800579592 /* IV DripUITests */ = {
+			isa = PBXGroup;
+			children = (
+				2794FEBB2A88BD8800579592 /* IV_DripUITests.swift */,
+				2794FEBD2A88BD8800579592 /* IV_DripUITestsLaunchTests.swift */,
+			);
+			path = "IV DripUITests";
+			sourceTree = "<group>";
+		};
+		2794FECA2A88BE0700579592 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2794FECC2A88BE7E00579592 /* Constants.swift */,
+				2794FECE2A88BE8C00579592 /* DecimalWheelPicker.swift */,
+				2794FED22A88C38C00579592 /* IntWheelPicker.swift */,
+				2794FED62A88D12600579592 /* NavigationModel.swift */,
+				27B0DD742A89763600C69474 /* LayoutExtensions.swift */,
+				27D960D72A8CC317002121F3 /* DBBrain.swift */,
+				27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2794FECB2A88BE1100579592 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				27B46D4D2A988B6C008101C5 /* My Solutions */,
+				27A3F5C12A95FDE10007BC7C /* Input Rows */,
+				27A3F5B92A94BD1E0007BC7C /* Custom Drugs */,
+				2794FED82A88D23700579592 /* HomeView.swift */,
+				2794FEDA2A88D3DC00579592 /* CalculatorView.swift */,
+				2794FEE82A8924A400579592 /* MySolutionsView.swift */,
+				27661B692A8B8381005D07C9 /* AddMedView.swift */,
+				27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		27A3F5B92A94BD1E0007BC7C /* Custom Drugs */ = {
+			isa = PBXGroup;
+			children = (
+				27A3F5BA2A94BD350007BC7C /* Solution */,
+			);
+			path = "Custom Drugs";
+			sourceTree = "<group>";
+		};
+		27A3F5BA2A94BD350007BC7C /* Solution */ = {
+			isa = PBXGroup;
+			children = (
+				27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */,
+				27A3F5BB2A94BD620007BC7C /* CustomSolutionMyMedsView.swift */,
+			);
+			path = Solution;
+			sourceTree = "<group>";
+		};
+		27A3F5C12A95FDE10007BC7C /* Input Rows */ = {
+			isa = PBXGroup;
+			children = (
+				27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */,
+				2794FEDC2A88E2E500579592 /* WeightPicker.swift */,
+				2794FED02A88BF1600579592 /* DecimalInputRowView.swift */,
+				2794FED42A88C50F00579592 /* IntInputRowView.swift */,
+				2794FEE02A88E45100579592 /* DrugWeightRowView.swift */,
+				272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */,
+				27D960D92A8CC7DB002121F3 /* MyMedDoseRowView.swift */,
+				2794FEE22A88E6A900579592 /* InfusionRowView.swift */,
+				2794FEE42A88E83B00579592 /* ConcentrationRowView.swift */,
+				2794FEE62A88E9A100579592 /* VolumeRowView.swift */,
+				27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */,
+			);
+			path = "Input Rows";
+			sourceTree = "<group>";
+		};
+		27B46D4D2A988B6C008101C5 /* My Solutions */ = {
+			isa = PBXGroup;
+			children = (
+				27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */,
+				27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */,
+			);
+			path = "My Solutions";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2794FE972A88BD8400579592 /* IV Drip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2794FEC12A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV Drip" */;
+			buildPhases = (
+				2794FE942A88BD8400579592 /* Sources */,
+				2794FE952A88BD8400579592 /* Frameworks */,
+				2794FE962A88BD8400579592 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "IV Drip";
+			productName = "IV Drip";
+			productReference = 2794FE982A88BD8400579592 /* IV Drip.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2794FEAC2A88BD8800579592 /* IV DripTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2794FEC42A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV DripTests" */;
+			buildPhases = (
+				2794FEA92A88BD8800579592 /* Sources */,
+				2794FEAA2A88BD8800579592 /* Frameworks */,
+				2794FEAB2A88BD8800579592 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2794FEAF2A88BD8800579592 /* PBXTargetDependency */,
+			);
+			name = "IV DripTests";
+			productName = "IV DripTests";
+			productReference = 2794FEAD2A88BD8800579592 /* IV DripTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		2794FEB62A88BD8800579592 /* IV DripUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2794FEC72A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV DripUITests" */;
+			buildPhases = (
+				2794FEB32A88BD8800579592 /* Sources */,
+				2794FEB42A88BD8800579592 /* Frameworks */,
+				2794FEB52A88BD8800579592 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2794FEB92A88BD8800579592 /* PBXTargetDependency */,
+			);
+			name = "IV DripUITests";
+			productName = "IV DripUITests";
+			productReference = 2794FEB72A88BD8800579592 /* IV DripUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2794FE902A88BD8400579592 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1430;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2794FE972A88BD8400579592 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					2794FEAC2A88BD8800579592 = {
+						CreatedOnToolsVersion = 14.3;
+						TestTargetID = 2794FE972A88BD8400579592;
+					};
+					2794FEB62A88BD8800579592 = {
+						CreatedOnToolsVersion = 14.3;
+						TestTargetID = 2794FE972A88BD8400579592;
+					};
+				};
+			};
+			buildConfigurationList = 2794FE932A88BD8400579592 /* Build configuration list for PBXProject "IV Drip" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2794FE8F2A88BD8400579592;
+			productRefGroup = 2794FE992A88BD8400579592 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2794FE972A88BD8400579592 /* IV Drip */,
+				2794FEAC2A88BD8800579592 /* IV DripTests */,
+				2794FEB62A88BD8800579592 /* IV DripUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2794FE962A88BD8400579592 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2794FEA32A88BD8700579592 /* Preview Assets.xcassets in Resources */,
+				2794FEA02A88BD8700579592 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEAB2A88BD8800579592 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEB52A88BD8800579592 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2794FE942A88BD8400579592 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				272BB91E2A8B7C4900A8788A /* HorizontalWheelPicker.swift in Sources */,
+				27D960D82A8CC317002121F3 /* DBBrain.swift in Sources */,
+				2794FECD2A88BE7E00579592 /* Constants.swift in Sources */,
+				27D960DA2A8CC7DB002121F3 /* MyMedDoseRowView.swift in Sources */,
+				2794FEA52A88BD8700579592 /* Persistence.swift in Sources */,
+				2794FEE72A88E9A100579592 /* VolumeRowView.swift in Sources */,
+				2794FEE92A8924A400579592 /* MySolutionsView.swift in Sources */,
+				2794FEA82A88BD8700579592 /* IV_Drip.xcdatamodeld in Sources */,
+				2794FE9E2A88BD8400579592 /* ContentView.swift in Sources */,
+				2794FEDB2A88D3DC00579592 /* CalculatorView.swift in Sources */,
+				27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */,
+				2794FEE12A88E45100579592 /* DrugWeightRowView.swift in Sources */,
+				2794FED12A88BF1600579592 /* DecimalInputRowView.swift in Sources */,
+				27661B6A2A8B8381005D07C9 /* AddMedView.swift in Sources */,
+				27A3F5BC2A94BD620007BC7C /* CustomSolutionMyMedsView.swift in Sources */,
+				27A3F5BE2A94BDA10007BC7C /* SectionHeaderView.swift in Sources */,
+				2794FED92A88D23700579592 /* HomeView.swift in Sources */,
+				27B0DD732A8974D300C69474 /* AddCustomSolutionView.swift in Sources */,
+				27A3F5C02A9564D90007BC7C /* AmpouleNumberRowView.swift in Sources */,
+				2794FED52A88C50F00579592 /* IntInputRowView.swift in Sources */,
+				27B46D532A98BAF3008101C5 /* PushDoseRowView.swift in Sources */,
+				2794FED32A88C38C00579592 /* IntWheelPicker.swift in Sources */,
+				2794FED72A88D12600579592 /* NavigationModel.swift in Sources */,
+				27B46D4F2A988FA5008101C5 /* SolutionListTileView.swift in Sources */,
+				2794FE9C2A88BD8400579592 /* IV_DripApp.swift in Sources */,
+				2794FECF2A88BE8C00579592 /* DecimalWheelPicker.swift in Sources */,
+				27A3F5C32A960E730007BC7C /* InfusionCalculator.swift in Sources */,
+				2794FEDD2A88E2E500579592 /* WeightPicker.swift in Sources */,
+				2794FEE32A88E6A900579592 /* InfusionRowView.swift in Sources */,
+				27B46D512A989CD1008101C5 /* MySolutionCalculatorView.swift in Sources */,
+				2794FEE52A88E83B00579592 /* ConcentrationRowView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEA92A88BD8800579592 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2794FEB22A88BD8800579592 /* IV_DripTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2794FEB32A88BD8800579592 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2794FEBE2A88BD8800579592 /* IV_DripUITestsLaunchTests.swift in Sources */,
+				2794FEBC2A88BD8800579592 /* IV_DripUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2794FEAF2A88BD8800579592 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2794FE972A88BD8400579592 /* IV Drip */;
+			targetProxy = 2794FEAE2A88BD8800579592 /* PBXContainerItemProxy */;
+		};
+		2794FEB92A88BD8800579592 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2794FE972A88BD8400579592 /* IV Drip */;
+			targetProxy = 2794FEB82A88BD8800579592 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2794FEBF2A88BD8800579592 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2794FEC02A88BD8800579592 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2794FEC22A88BD8800579592 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"IV Drip/Preview Content\"";
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-Drip";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2794FEC32A88BD8800579592 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"IV Drip/Preview Content\"";
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-Drip";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2794FEC52A88BD8800579592 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-DripTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IV Drip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IV Drip";
+			};
+			name = Debug;
+		};
+		2794FEC62A88BD8800579592 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-DripTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IV Drip.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/IV Drip";
+			};
+			name = Release;
+		};
+		2794FEC82A88BD8800579592 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-DripUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "IV Drip";
+			};
+			name = Debug;
+		};
+		2794FEC92A88BD8800579592 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = C488HFLHGU;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "hdel.IV-DripUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "IV Drip";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2794FE932A88BD8400579592 /* Build configuration list for PBXProject "IV Drip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2794FEBF2A88BD8800579592 /* Debug */,
+				2794FEC02A88BD8800579592 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2794FEC12A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV Drip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2794FEC22A88BD8800579592 /* Debug */,
+				2794FEC32A88BD8800579592 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2794FEC42A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV DripTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2794FEC52A88BD8800579592 /* Debug */,
+				2794FEC62A88BD8800579592 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2794FEC72A88BD8800579592 /* Build configuration list for PBXNativeTarget "IV DripUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2794FEC82A88BD8800579592 /* Debug */,
+				2794FEC92A88BD8800579592 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2794FEA62A88BD8700579592 /* IV_Drip.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2794FEA72A88BD8700579592 /* IV_Drip.xcdatamodel */,
+			);
+			currentVersion = 2794FEA72A88BD8700579592 /* IV_Drip.xcdatamodel */;
+			path = IV_Drip.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 2794FE902A88BD8400579592 /* Project object */;
+}

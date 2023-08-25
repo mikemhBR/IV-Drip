@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22G74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CustomSolutionEntity" representedClassName="CustomSolutionEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="amp_number" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="dilution_volume" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="drug_volume_amp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="drug_weight_amp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="favorite" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="group_uuid" optional="YES" attributeType="String"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="main_active" optional="YES" attributeType="String"/>
+        <attribute name="solution_category" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="solution_def_code" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="solution_max" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="solution_min" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="solution_name" attributeType="String"/>
+        <attribute name="solution_obs" optional="YES" attributeType="String"/>
+        <attribute name="solution_type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="solution_uuid" attributeType="String"/>
+        <relationship name="category" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SolutionCategoryEntity" inverseName="custom_solution" inverseEntity="SolutionCategoryEntity"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="MedicationEntity" representedClassName="MedicationEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="dose_reference" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="favorite" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="med_category" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="med_def_code" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="med_max" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="med_min" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="med_name" optional="YES" attributeType="String"/>
+        <attribute name="med_observations" optional="YES" attributeType="String"/>
+        <attribute name="med_uuid" attributeType="String"/>
+        <attribute name="med_volume" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="med_weight" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="SolutionCategoryEntity" representedClassName="SolutionCategoryEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="category_def_code" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="category_name" attributeType="String"/>
+        <attribute name="category_uuid" attributeType="String"/>
+        <relationship name="custom_solution" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CustomSolutionEntity" inverseName="category" inverseEntity="CustomSolutionEntity"/>
+    </entity>
+</model>
