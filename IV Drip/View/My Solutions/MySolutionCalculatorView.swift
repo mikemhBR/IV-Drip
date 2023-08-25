@@ -104,7 +104,12 @@ struct MySolutionCalculatorView: View {
                     Spacer()
                         .frame(height: 32)
                     
-                    infusionResultView
+                    if selectedTab == 0 {
+                        infusionResultView
+                    } else {
+                        pushDoseResultView
+                    }
+                    
                 }
                 
                 
@@ -141,6 +146,34 @@ struct MySolutionCalculatorView: View {
         VStack {
             VStack {
                 Text("Infusion Rate")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(Color("Text"))
+                
+                Text(infusionRateResultString)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(Color("Text"))
+                
+            }
+            .padding(Constants.Layout.kPadding)
+            .background(Color("Row Background"))
+            .cornerRadius(Constants.Layout.cornerRadius.medium.rawValue)
+            
+            
+            Picker("Select Infusion Factor", selection: $desiredInfusionRateFactor) {
+                Text("ml/h").tag(0)
+                Text("ml/min").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 240)
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+        }
+    }
+    
+    var pushDoseResultView: some View {
+        VStack {
+            VStack {
+                Text("Push Dose (ml)")
                     .font(.system(size: 24, weight: .light))
                     .foregroundColor(Color("Text"))
                 
