@@ -43,6 +43,7 @@
 		27B46D532A98BAF3008101C5 /* PushDoseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */; };
 		27D960D82A8CC317002121F3 /* DBBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D960D72A8CC317002121F3 /* DBBrain.swift */; };
 		27D960DA2A8CC7DB002121F3 /* MyMedDoseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D960D92A8CC7DB002121F3 /* MyMedDoseRowView.swift */; };
+		27FF2FE42A9B4D5600240AF1 /* CustomStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27FF2FE32A9B4D5600240AF1 /* CustomStepper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDoseRowView.swift; sourceTree = "<group>"; };
 		27D960D72A8CC317002121F3 /* DBBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBBrain.swift; sourceTree = "<group>"; };
 		27D960D92A8CC7DB002121F3 /* MyMedDoseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMedDoseRowView.swift; sourceTree = "<group>"; };
+		27FF2FE32A9B4D5600240AF1 /* CustomStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStepper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,13 +208,12 @@
 		2794FECB2A88BE1100579592 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				27FF2FE22A9B4D4400240AF1 /* Components */,
 				27B46D4D2A988B6C008101C5 /* My Solutions */,
 				27A3F5C12A95FDE10007BC7C /* Input Rows */,
 				27A3F5B92A94BD1E0007BC7C /* Custom Drugs */,
 				2794FED82A88D23700579592 /* HomeView.swift */,
 				2794FEDA2A88D3DC00579592 /* CalculatorView.swift */,
-				2794FEE82A8924A400579592 /* MySolutionsView.swift */,
-				27661B692A8B8381005D07C9 /* AddMedView.swift */,
 				27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */,
 			);
 			path = View;
@@ -221,18 +222,17 @@
 		27A3F5B92A94BD1E0007BC7C /* Custom Drugs */ = {
 			isa = PBXGroup;
 			children = (
-				27A3F5BA2A94BD350007BC7C /* Solution */,
 			);
 			path = "Custom Drugs";
 			sourceTree = "<group>";
 		};
-		27A3F5BA2A94BD350007BC7C /* Solution */ = {
+		27A3F5BA2A94BD350007BC7C /* Custom Solution */ = {
 			isa = PBXGroup;
 			children = (
 				27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */,
 				27A3F5BB2A94BD620007BC7C /* CustomSolutionMyMedsView.swift */,
 			);
-			path = Solution;
+			path = "Custom Solution";
 			sourceTree = "<group>";
 		};
 		27A3F5C12A95FDE10007BC7C /* Input Rows */ = {
@@ -256,10 +256,29 @@
 		27B46D4D2A988B6C008101C5 /* My Solutions */ = {
 			isa = PBXGroup;
 			children = (
+				2794FEE82A8924A400579592 /* MySolutionsView.swift */,
+				27FF2FE52A9B53B300240AF1 /* My Meds */,
+				27A3F5BA2A94BD350007BC7C /* Custom Solution */,
 				27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */,
 				27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */,
 			);
 			path = "My Solutions";
+			sourceTree = "<group>";
+		};
+		27FF2FE22A9B4D4400240AF1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				27FF2FE32A9B4D5600240AF1 /* CustomStepper.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		27FF2FE52A9B53B300240AF1 /* My Meds */ = {
+			isa = PBXGroup;
+			children = (
+				27661B692A8B8381005D07C9 /* AddMedView.swift */,
+			);
+			path = "My Meds";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -404,6 +423,7 @@
 				2794FEDB2A88D3DC00579592 /* CalculatorView.swift in Sources */,
 				27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */,
 				2794FEE12A88E45100579592 /* DrugWeightRowView.swift in Sources */,
+				27FF2FE42A9B4D5600240AF1 /* CustomStepper.swift in Sources */,
 				2794FED12A88BF1600579592 /* DecimalInputRowView.swift in Sources */,
 				27661B6A2A8B8381005D07C9 /* AddMedView.swift in Sources */,
 				27A3F5BC2A94BD620007BC7C /* CustomSolutionMyMedsView.swift in Sources */,

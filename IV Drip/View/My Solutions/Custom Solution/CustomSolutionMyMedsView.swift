@@ -23,21 +23,37 @@ struct CustomSolutionMyMedsView: View {
             }
             
             ForEach(medicationList, id: \.self) { med in
-                Text(med.med_name ?? "error")
-                    .onTapGesture {
-                        selectedMed = med
-                        withAnimation {
-                            dismiss()
-                        }
+                VStack (alignment: .leading) {
+                    Text(med.med_name ?? "error")
+                        .fixedSize()
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(Color("Text"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Text("\(String(format: "%.1f", med.med_weight))mg / \(String(format: "%.1f", med.med_volume))ml")
+                        .fixedSize()
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(Color("Text"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(Constants.Layout.kPadding/2)
+                .background(Color("Row Background"))
+                .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                .padding(.vertical, 2)
+                .onTapGesture {
+                    selectedMed = med
+                    withAnimation {
+                        dismiss()
                     }
+                }
             }
             
             Spacer()
             
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.white)
         .padding(Constants.Layout.kPadding)
+        .background(Color("Background 200"))
         .onAppear() {
             medicationList = dbBrain.getAllMedications()
         }

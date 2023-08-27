@@ -31,8 +31,7 @@ struct ContentView: View {
             case .addCustomSolution:
                 AddCustomSolutionView()
             case .addMedication:
-                AddMedView()
-            }
+                AddMedView()            }
             
         }
         

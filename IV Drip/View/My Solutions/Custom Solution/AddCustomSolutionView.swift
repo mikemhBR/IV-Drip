@@ -7,20 +7,13 @@
 
 import SwiftUI
 
-class AddCustomSolutionViewController: ObservableObject {
-    
-    func saveCustomSolution() {
-        
-    }
-    
-}
+
 
 struct AddCustomSolutionView: View {
     
     @EnvironmentObject var navigationModel: NavigationModel
     @EnvironmentObject var dbBrain: DBBrain
     
-    @StateObject var viewModel = AddCustomSolutionViewController()
     
     @State private var solutionNameField = ""
     
@@ -37,7 +30,7 @@ struct AddCustomSolutionView: View {
     @State private var showMyMeds = false
     @State var selectedMyMed: MedicationEntity?
     @State private var selectedMedQuantity = 1.0
-    @State private var selectedMedQuantityString = "1"
+    @State private var selectedMedQuantityString = "1.0"
     
     @State private var selectedWeightOption = WeightOptions.miligrams
     
@@ -72,6 +65,9 @@ struct AddCustomSolutionView: View {
                     navigationModel.navigateTo(to: .mySolutions)
                 }
             }
+            
+            Spacer()
+                .frame(height: Constants.Layout.kPadding)
             
             VStack (alignment: .center, spacing: Constants.Layout.kPadding*2) {
                 
@@ -174,59 +170,74 @@ struct AddCustomSolutionView: View {
                 let weightString = String(format: "%.2f", safeMyMed.med_weight*selectedMedQuantity)
                 let volumeString = String(format: "%.1f", safeMyMed.med_volume*selectedMedQuantity)
                 
-                HStack {
-                    if selectedMedQuantity < 1 {
+                HStack (spacing: 4) {
+                    
+                    HStack {
+                        
+                        
+                        VStack (alignment: .leading) {
+                            Text(safeMyMed.med_name ?? "")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(Color("Text"))
+                            
+                            Text("\(String(format: "%.1f", safeMyMed.med_weight))mg / \(String(format: "%.1f", safeMyMed.med_volume))ml")
+                                .font(.system(size: 11, weight: .regular))
+                        }
+                        
+                        Spacer()
+                        
                         Button {
+                            withAnimation {
+                                showSelectedMedWeightPicker.toggle()
+                            }
+                        } label: {
+                            Image(systemName: "plusminus.circle.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 28)
+                        }
+                        
+                        TextField("Selected Med Number", text: $selectedMedQuantityString, onEditingChanged: { isEditing in
+                            if isEditing {
+                                if Double(selectedMedQuantityString) == 0.0 {
+                                    DispatchQueue.main.async {
+                                        selectedMedQuantityString = ""
+                                    }
+                                }
+                            } else {
+                                selectedMedQuantity = Double(selectedMedQuantityString) ?? 0.0
+                            }
+                        })
+                            .foregroundColor(Color("Text"))
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 72, height: Constants.Layout.textFieldHeight)
+                            .background(Color.white)
+                            .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                            .disabled(showSelectedMedWeightPicker)
+                            .onTapGesture {
+                                withAnimation {
+                                    showSelectedMedWeightPicker = false
+                                }
+                                
+                            }
+                            .onSubmit {
+                                selectedMedQuantity = Double(selectedMedQuantityString) ?? 0.0
+                            }
+                        
+                        
+                        CustomStepper(inputDouble: $selectedMedQuantity) {
                             withAnimation {
                                 selectedMyMed = nil
                             }
-                        } label: {
-                            Image(systemName: "trash")
                         }
-                    }
-                    
-                    VStack {
-                        Text(safeMyMed.med_name ?? "")
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        withAnimation {
-                            showSelectedMedWeightPicker.toggle()
-                        }
-                    } label: {
-                        Image(systemName: "plusminus.circle.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 28)
-                    }
-                    
-                    TextField("Infusion Velocity", text: $selectedMedQuantityString)
-                        .modifier(InputRowTextFieldModifier())
-                        .disabled(showSelectedMedWeightPicker)
-                        
-                        .onTapGesture {
-                            withAnimation {
-                                showSelectedMedWeightPicker = false
-                            }
-                            
-                        }
-                        .onChange(of: selectedMedQuantityString) { newValue in
-                            selectedMedQuantity = Double(newValue) ?? 0.0
-                        }
-                    
-                    
-                    Stepper("") {
-                        selectedMedQuantity += 1
-                    } onDecrement: {
-                        if selectedMedQuantity > 0 {
-                            selectedMedQuantity -= 1
-                        }
-                    }
-                    .frame(width: 96)
 
-                }
+                    }
+                    .padding(Constants.Layout.kPadding/2)
+                    .background(Color("Row Background"))
+                    .cornerRadius(8)
+                    }
+                    
                 
                 if showSelectedMedWeightPicker {
                     DecimalWheelPicker(intCases: 2, decimalCases: 1, selection: $selectedMedQuantity, initialValue: selectedMedQuantity)
@@ -454,7 +465,7 @@ struct AddCustomSolutionView: View {
             let weightString = String(format: "%.2f", finalWeight)
             let volume = String(format: "%.1f", dilutionVolume)
             
-            let totalVolume = dilutionVolume + safeSelectedMed.med_volume
+            let totalVolume = dilutionVolume + safeSelectedMed.med_volume*selectedMedQuantity
             let totalVolumeString = String(format: "%.1f", totalVolume)
             
             let concentration = totalVolume == 0 ? " - " : String(format: "%.3f", (finalWeight/totalVolume))
@@ -471,6 +482,7 @@ struct AddCustomSolutionView: View {
                     HStack (spacing: 8) {
                         Text(safeSelectedMed.med_name ?? "")
                             .font(.system(size: 14, weight: .light))
+                            .fixedSize()
                         
                         Rectangle()
                             .frame(height: 1)
@@ -479,12 +491,14 @@ struct AddCustomSolutionView: View {
                         
                         Text("\(weightString)mg / \(volume)ml")
                             .font(.system(size: 14, weight: .light))
+                            .fixedSize()
                         
                     }
                     
                     HStack (spacing: 8) {
                         Text("Fluid")
                             .font(.system(size: 14, weight: .light))
+                            .fixedSize()
                         
                         Rectangle()
                             .frame(height: 1)
@@ -493,12 +507,14 @@ struct AddCustomSolutionView: View {
                         
                         Text("\(volume) ml")
                             .font(.system(size: 14, weight: .light))
+                            .fixedSize()
                         
                     }
                     
-                    Text("Final Volume: \(totalVolumeString)")
+                    Text("Final Volume: \(totalVolumeString)ml")
                         .font(.system(size: 14, weight: .semibold))
                         .frame(maxWidth: .infinity, alignment: .trailing)
+                        .fixedSize()
                     
                     Spacer()
                         .frame(height: 8)
@@ -548,6 +564,7 @@ struct AddCustomSolutionView: View {
                     HStack (spacing: 8) {
                         Text(mainComponentName.isEmpty ? "Drug" : mainComponentName)
                             .font(.system(size: 14, weight: .light))
+                            .fixedSize()
                         
                         Rectangle()
                             .frame(height: 1)
@@ -622,30 +639,67 @@ struct AddCustomSolutionView: View {
     }
     
     func saveSolution() {
+        // Check if user selected a solution type
         guard let solutionType = isContinuousInfusion else {
             return
         }
         
-        do {
-            try dbBrain.saveCustomSolution(
-                solutionName: solutionNameField,
-                mainActiveComponent: mainComponentName,
-                drugWeightPerAmp: mainComponentWeight,
-                drugVolumePerAmp: mainComponentAmpVolume,
-                numberAmps: selectedMedQuantity,
-                dilutionVolume: dilutionVolume,
-                solutionType: solutionType,
-                minimumDose: minimumDose == 0.0 ? nil : minimumDose,
-                maximumDose: maximumDose == 0.0 ? nil : maximumDose,
-                solutionObservation: observationsField
-            )
-            
-            withAnimation {
-                navigationModel.navigateTo(to: .mySolutions)
+        if let userSelectedMed = selectedMyMed {
+            do {
+                try dbBrain.saveCustomSolution(
+                    solutionName: solutionNameField,
+                    mainActiveComponent: userSelectedMed.med_name ?? "error",
+                    drugWeightPerAmp: userSelectedMed.med_weight,
+                    drugVolumePerAmp: userSelectedMed.med_volume,
+                    numberAmps: selectedMedQuantity,
+                    dilutionVolume: dilutionVolume,
+                    solutionType: solutionType,
+                    minimumDose: minimumDose == 0.0 ? nil : minimumDose,
+                    maximumDose: maximumDose == 0.0 ? nil : maximumDose,
+                    solutionObservation: observationsField
+                )
+                
+                withAnimation {
+                    navigationModel.navigateTo(to: .mySolutions)
+                }
+            } catch {
+                return
             }
-        } catch {
-            return
+        } else {
+            
+            var adjustedWeight = 0.0
+            
+            switch selectedWeightOption {
+            case .grams:
+                adjustedWeight = mainComponentWeight*1000
+            case .miligrams:
+                adjustedWeight = mainComponentWeight
+            case .micrograms:
+                adjustedWeight = mainComponentWeight/1000
+            }
+            
+            do {
+                try dbBrain.saveCustomSolution(
+                    solutionName: solutionNameField,
+                    mainActiveComponent: mainComponentName,
+                    drugWeightPerAmp: adjustedWeight,
+                    drugVolumePerAmp: mainComponentAmpVolume,
+                    numberAmps: selectedMedQuantity,
+                    dilutionVolume: dilutionVolume,
+                    solutionType: solutionType,
+                    minimumDose: minimumDose == 0.0 ? nil : minimumDose,
+                    maximumDose: maximumDose == 0.0 ? nil : maximumDose,
+                    solutionObservation: observationsField
+                )
+                
+                withAnimation {
+                    navigationModel.navigateTo(to: .mySolutions)
+                }
+            } catch {
+                return
+            }
         }
+        
         
     }
     

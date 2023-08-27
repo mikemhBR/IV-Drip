@@ -25,11 +25,11 @@ enum ConcentrationOptions: String, CaseIterable {
 }
 
 enum PushDoseOptions: String, CaseIterable {
-    case mg
-    case mcg
-    case mgKg
-    case mcgKg
-    case unitsKg
+    case mg = "mg"
+    case mcg = "mcg"
+    case mgKg = "mg/kg"
+    case mcgKg = "mcg/kg"
+    case unitsKg = "U/kg"
 }
 
 enum WeightOptions: String, CaseIterable {
@@ -48,6 +48,10 @@ enum MedDoseOptions: String, CaseIterable {
 }
 
 struct Constants {
+    
+    struct AppStorage {
+        static let patientWeight = "patientWeight"
+    }
     
     struct Layout {
         

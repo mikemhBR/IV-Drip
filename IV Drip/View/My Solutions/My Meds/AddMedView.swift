@@ -40,27 +40,16 @@ struct AddMedView: View {
     
     var body: some View {
         
-        VStack (alignment: .leading, spacing: 0) {
+        VStack (alignment: .leading, spacing: Constants.Layout.kPadding) {
             
-            ZStack {
-                Button {
+            SectionHeaderView(sectionTitle: "Add New Medication") {
+                withAnimation {
                     navigationModel.navigateTo(to: .mySolutions)
-                } label: {
-                    
-                    Image(systemName: "chevron.left")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    
                 }
-                
-                Text("Add New Medication")
-                    .font(.system(size: 24, weight: .light))
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
-            .padding(.bottom, Constants.Layout.kPadding)
             
             ScrollView {
-                VStack (alignment: .leading, spacing: 0) {
+                VStack (alignment: .leading, spacing: Constants.Layout.kPadding) {
                     Label {
                         Text("Favorite")
                     } icon: {
@@ -75,19 +64,11 @@ struct AddMedView: View {
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .padding(.bottom, Constants.Layout.kPadding)
                     
-                    
-                    
                     medicationNameView
-                        .padding(.bottom, Constants.Layout.kPadding)
-                    
                     
                     drugWeightView
-                        .padding(.bottom, Constants.Layout.kPadding)
                     
-                    
-                    
-                    Text("Ampoule Volume")
-                    VolumeRowView(showPickerWheel: $showVolumePickerWheel, userInput: $medVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
+                    VolumeRowView(rowTitle: "Volume/Ampoule", showPickerWheel: $showVolumePickerWheel, userInput: $medVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
                         withAnimation {
                             showVolumePickerWheel = false
                             currentlySelectedRow = nil
@@ -102,7 +83,6 @@ struct AddMedView: View {
                         .padding(.bottom, Constants.Layout.kPadding)
                     
                     
-                    Spacer()
                     
                     Button {
                         saveMedication()
@@ -112,9 +92,10 @@ struct AddMedView: View {
                     } label: {
                         Text("Save")
                             .frame(width: Constants.Layout.buttonWidth.large.rawValue)
-                            .modifier(PrimaryButtonConfig())
+                            .modifier(PrimaryButtonConfig(active: (medWeight != 0.0 && medVolume != 0.0)))
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .disabled((medWeight == 0.0 || medVolume == 0.0))
                 }
             }
             
@@ -122,7 +103,9 @@ struct AddMedView: View {
             
             
         }
-        .padding(Constants.Layout.kPadding)
+        .padding(Constants.Layout.kPadding/2)
+        .background(Color("Background 200"))
+        
         
     }
     
@@ -133,23 +116,21 @@ struct AddMedView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             TextField("Medication Name", text: $medName)
+                .font(.system(size: 20))
+                .frame(height: 44)
+                .padding(.horizontal, Constants.Layout.kPadding/2)
+                .background(Color.white)
+                .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
                 
         }
     }
     
     var drugWeightView: some View {
-        VStack (spacing: 0) {
-            Text("Weight")
-                .caption3Title()
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            DrugWeightRowView(itemTitle: "Drug Weight/Amp", pickerIntCases: 4, pickerDecimalCases: 1, showPickerWheel: $showDrugWeightPickerWheel, userValue: $medWeight, selectedWeightOption: $selectedWeightOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .weight) {
-                withAnimation {
-                    showVolumePickerWheel = true
-                    currentlySelectedRow = .volume
-                }
+        DrugWeightRowView(itemTitle: "Weight/Amp", pickerIntCases: 4, pickerDecimalCases: 1, showPickerWheel: $showDrugWeightPickerWheel, userValue: $medWeight, selectedWeightOption: $selectedWeightOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .weight) {
+            withAnimation {
+                showVolumePickerWheel = true
+                currentlySelectedRow = .volume
             }
-            
         }
     }
     
@@ -203,11 +184,11 @@ struct AddMedView: View {
                     .caption3Title()
                 
                 TextField("Observations", text: $observationsField)
-                    .font(.system(size: 20))
                     .frame(height: 88)
+                    .font(.system(size: 20))
+                    .frame(height: 44)
+                    .padding(.horizontal, Constants.Layout.kPadding/2)
                     .background(Color.white)
-                    .padding(Constants.Layout.kPadding/2)
-                    .background(Color.gray.opacity(0.1))
                     .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
             }
             
@@ -216,17 +197,22 @@ struct AddMedView: View {
     }
     
     var resultView: some View {
-        let weight = String(format: "%.2f", medWeight)
+        let weight = String(format: "%.1f", medWeight)
         let volume = String(format: "%.1f", medVolume)
         
         return VStack {
             Text("\(weight) \(selectedWeightOption.rawValue) / \(volume) ml")
+                .font(.system(size: 14, weight: .semibold))
             
             Spacer()
-                .frame(height: Constants.Layout.kPadding)
+                .frame(height: Constants.Layout.kPadding/2)
             
-            Text(getconcentrationString() + " \(selectedWeightOption.rawValue) / ml")
+            Text(getconcentrationString() + " \(selectedWeightOption.rawValue)/ml")
+                .font(.system(size: 14, weight: .semibold))
         }
+        .padding(Constants.Layout.kPadding)
+        .background(Color("Row Background"))
+        .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
         .frame(maxWidth: .infinity, alignment: .center)
     }
     
@@ -239,10 +225,13 @@ struct AddMedView: View {
     }
     
     func saveMedication() {
+        let adjustedWeight = InfusionCalculator.getAdjustedWeight(inputWeight: medWeight, inputWeightFactor: selectedWeightOption)
+        
         if minimumDose == 0.0 && maximumDose == 0.0 {
+            
             dbBrain.saveNewMedication(
                 medName: medName,
-                medWeight: medWeight,
+                medWeight: adjustedWeight,
                 medVolume: medVolume,
                 medObs: observationsField,
                 minimum: nil,
@@ -250,7 +239,7 @@ struct AddMedView: View {
             )
             
         } else {
-            var doseReference = 9
+            var doseReference = 999
             switch selectedMedDoseOption {
             case .mg, .mcg:
                 doseReference = 0
@@ -263,9 +252,11 @@ struct AddMedView: View {
             case .unitsMin:
                 doseReference = 4
             }
+            
+            
             dbBrain.saveNewMedication(
                 medName: medName,
-                medWeight: medWeight,
+                medWeight: adjustedWeight,
                 medVolume: medVolume,
                 medObs: observationsField,
                 minimum: getDose(inputValue: minimumDose),

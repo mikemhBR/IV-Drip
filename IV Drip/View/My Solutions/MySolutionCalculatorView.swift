@@ -9,9 +9,11 @@ import SwiftUI
 
 struct MySolutionCalculatorView: View {
     
+    @Environment(\.dismiss) var dismiss
+    
     @EnvironmentObject var navigationModel: NavigationModel
     
-    //let selectedSolution: CustomSolutionEntity
+    let selectedSolution: SolutionListClass
     
     @State private var patientWeight: Double = 0.0
     
@@ -29,35 +31,37 @@ struct MySolutionCalculatorView: View {
     @State private var desiredInfusionRateFactor = 0
     
     @State private var infusionRateResultString = "-"
+    @State private var pushDoseResultString = "-"
     
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Layout.kPadding) {
             SectionHeaderView(sectionTitle: "Custom Solution Calculator") {
                 withAnimation {
-                    navigationModel.navigateTo(to: .mySolutions)
+                    dismiss()
                 }
             }
             
             
             ScrollView {
-                SolutionListTileView(solution: SolutionListClass.testData)
                 
-                Text("Patient Weight")
-                    .sectionHeaderStyle()
-                
-                HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, patientWeight: $patientWeight)
-                
-                Picker("Select Calculator Type", selection: $selectedTab) {
-                    Text("Infusion Rate").tag(0)
-                    Text("Dose").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .frame(width: 240)
-                .frame(maxWidth: .infinity, alignment: .center)
-                
-                
-                
-                VStack {
+                VStack (spacing: Constants.Layout.kPadding) {
+                    SolutionListTileView(solution: selectedSolution)
+                    
+                    
+                    Text("Patient Weight")
+                        .sectionHeaderStyle()
+                    
+                    HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, patientWeight: $patientWeight)
+                    
+                    
+                    Picker("Select Calculator Type", selection: $selectedTab) {
+                        Text("Infusion Rate").tag(0)
+                        Text("Dose").tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 240)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    
                     if selectedTab == 0 {
                         ConcentrationRowView(itemTitle: "Desired Rate",
                                              pickerIntCases: 3,
@@ -100,45 +104,44 @@ struct MySolutionCalculatorView: View {
                         
                     }
                     
-                    
-                    Spacer()
-                        .frame(height: 32)
+                    Divider()
                     
                     if selectedTab == 0 {
                         infusionResultView
                     } else {
                         pushDoseResultView
                     }
-                    
                 }
                 
                 
                 
-                
-                VStack {
-                    
-                }
             }
-            
-            
-            
-            
-            
             
             
         }
         .padding(Constants.Layout.kPadding/2)
+        .background(Color("Background 200"))
         .onChange(of: desiredRateField) { newValue in
             getInfusionRate()
         }
         .onChange(of: patientWeight) { newValue in
             getInfusionRate()
+            getPushDose()
         }
         .onChange(of: desiredInfusionRateFactor) { newValue in
             getInfusionRate()
         }
         .onChange(of: selectedConcentrationFactor) { newValue in
             getInfusionRate()
+        }
+        .onChange(of: pushDoseRateField) { newValue in
+            getPushDose()
+        }
+        .onChange(of: selectedPushDoseFactor) { newValue in
+            getPushDose()
+        }
+        .onAppear() {
+            print(solutionConcentration())
         }
     }
     
@@ -155,7 +158,7 @@ struct MySolutionCalculatorView: View {
                 
             }
             .padding(Constants.Layout.kPadding)
-            .background(Color("Row Background"))
+            .background(Color.white)
             .cornerRadius(Constants.Layout.cornerRadius.medium.rawValue)
             
             
@@ -177,31 +180,32 @@ struct MySolutionCalculatorView: View {
                     .font(.system(size: 24, weight: .light))
                     .foregroundColor(Color("Text"))
                 
-                Text(infusionRateResultString)
+                Text(pushDoseResultString)
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color("Text"))
                 
             }
             .padding(Constants.Layout.kPadding)
-            .background(Color("Row Background"))
+            .background(Color.white)
             .cornerRadius(Constants.Layout.cornerRadius.medium.rawValue)
             
             
-            Picker("Select Infusion Factor", selection: $desiredInfusionRateFactor) {
-                Text("ml/h").tag(0)
-                Text("ml/min").tag(1)
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 240)
-            .frame(maxWidth: .infinity, alignment: .center)
-            
         }
+    }
+    
+    func solutionConcentration() -> Double {
+        guard let safeSolutionEntity = selectedSolution.solutionEntity else { return 999 }
+        let solutionWeight = safeSolutionEntity.drug_weight_amp*safeSolutionEntity.amp_number
+        let solutionVolume = (safeSolutionEntity.drug_volume_amp*safeSolutionEntity.amp_number) + safeSolutionEntity.dilution_volume
+        
+        return solutionWeight/solutionVolume
+        
     }
     
     func getInfusionRate() {
         let outputRateFactor: InfusionRateOptions = desiredInfusionRateFactor == 0 ? .mlHour : .mlMin
         
-        let solutionConcentration = 0.1
+        let solutionConcentration = solutionConcentration()
         
         let infusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: desiredRateField, desiredRateMethod: selectedConcentrationFactor, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: outputRateFactor)
         
@@ -209,14 +213,24 @@ struct MySolutionCalculatorView: View {
             infusionRateResultString = String(format: "%.1f", infusionRate) + " " + outputRateFactor.rawValue
         }
     }
-}
-
-struct MySolutionCalculator_Previews: PreviewProvider {
-    static var previews: some View {
-        MySolutionCalculatorView()
-            .environmentObject(NavigationModel.shared)
-            .environmentObject(DBBrain.shared)
+    
+    func getPushDose() {
+        let solutionConcentration = solutionConcentration()
+        
+        let pushDose = InfusionCalculator.getPushDose(desiredPushDose: pushDoseRateField, desiredPushMethod: selectedPushDoseFactor, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
+        
+        DispatchQueue.main.async {
+            pushDoseResultString = String(format: "%.1f", pushDose) + " ml"
+        }
     }
 }
+
+//struct MySolutionCalculator_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MySolutionCalculatorView()
+//            .environmentObject(NavigationModel.shared)
+//            .environmentObject(DBBrain.shared)
+//    }
+//}
 
 

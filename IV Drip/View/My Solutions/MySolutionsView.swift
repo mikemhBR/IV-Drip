@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SolutionListClass: Identifiable {
     let id = UUID()
+    var solutionEntity: CustomSolutionEntity?
     let solutionName: String
     let solutionType: Int
     let mainComponentName: String
@@ -17,6 +18,27 @@ struct SolutionListClass: Identifiable {
     let numberAmps: Double
     let dilutionVolume: Double
     
+    init(solutionEntity: CustomSolutionEntity) {
+        self.solutionEntity = solutionEntity
+        self.solutionName = solutionEntity.solution_name ?? ""
+        self.solutionType = Int(solutionEntity.solution_type)
+        self.mainComponentName = solutionEntity.main_active ?? ""
+        self.mainComponentWeightPerAmp = solutionEntity.drug_weight_amp
+        self.volumePerAmp = solutionEntity.drug_volume_amp
+        self.numberAmps = solutionEntity.amp_number
+        self.dilutionVolume = solutionEntity.dilution_volume
+    }
+    
+    init(solutionName: String, solutionType: Int, mainComponentName: String, mainComponentWeightPerAmp: Double, volumePerAmp: Double, numberAmps: Double, dilutionVolume: Double) {
+        self.solutionName = solutionName
+        self.solutionType = solutionType
+        self.mainComponentName = mainComponentName
+        self.mainComponentWeightPerAmp = mainComponentWeightPerAmp
+        self.volumePerAmp = volumePerAmp
+        self.numberAmps = numberAmps
+        self.dilutionVolume = dilutionVolume
+    }
+    
     static var testData = SolutionListClass(solutionName: "Dobutamine Drip", solutionType: 1, mainComponentName: "Dobutamine", mainComponentWeightPerAmp: 250.0, volumePerAmp: 20.0, numberAmps: 4, dilutionVolume: 170.0)
 }
 
@@ -24,6 +46,7 @@ class MySolutionsViewModel: ObservableObject {
     var dbBrain = DBBrain.shared
     
     @Published var solutionList = [SolutionListClass]()
+    @Published var selectedSolution: SolutionListClass?
     
     init() {
         getSolutionList()
@@ -38,18 +61,8 @@ class MySolutionsViewModel: ObservableObject {
         }
         
         for solution in databaseSolutionList {
-            solutionList.append(SolutionListClass(
-                solutionName: solution.solution_name ?? "Error",
-                solutionType: Int(solution.solution_type),
-                mainComponentName: solution.main_active ?? "Error",
-                mainComponentWeightPerAmp: solution.drug_weight_amp,
-                volumePerAmp: solution.drug_volume_amp,
-                numberAmps: solution.amp_number,
-                dilutionVolume: solution.dilution_volume))
+            solutionList.append(SolutionListClass(solutionEntity: solution))
         }
-        
-        
-        
     }
 }
 
@@ -62,6 +75,8 @@ struct MySolutionsView: View {
     @State private var currentTab = 0
     
     @State private var medicationList = [MedicationEntity]()
+    
+    @State private var showSolutionCalculator = false
     
     var body: some View {
         TabView(selection: $currentTab) {
@@ -85,9 +100,18 @@ struct MySolutionsView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
-
+                
                 ForEach(viewModel.solutionList, id: \.id) { solution in
-                        SolutionListTileView(solution: solution)
+                    SolutionListTileView(solution: solution)
+                        .onTapGesture {
+                            
+                            viewModel.selectedSolution = solution
+                            
+                            withAnimation {
+                                showSolutionCalculator = true
+                            }
+                            
+                        }
                 }
                 .padding(.horizontal, Constants.Layout.kPadding/2)
                 
@@ -96,6 +120,7 @@ struct MySolutionsView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(Constants.Layout.kPadding/2)
+            .background(Color("Background 200"))
             .tabItem({
                 Label {
                     Text("Solutions")
@@ -122,22 +147,39 @@ struct MySolutionsView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
-
+                
                 ForEach(medicationList, id: \.self) { med in
-                    Text(med.med_name ?? "")
+                    VStack (alignment: .leading) {
+                        Text(med.med_name ?? "error")
+                            .fixedSize()
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color("Text"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text("\(String(format: "%.1f", med.med_weight))mg / \(String(format: "%.1f", med.med_volume))ml")
+                            .fixedSize()
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(Color("Text"))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(Constants.Layout.kPadding/2)
+                    .background(Color("Row Background"))
+                    .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                    .padding(.vertical, 2)
                 }
                 
                 Spacer()
                 
             }
             .padding(Constants.Layout.kPadding/2)
+            .background(Color("Background 200"))
             .tabItem({
                 Label {
                     Text("Meds")
                 } icon: {
                     Image(systemName: "heart.fill")
                 }
-
+                
             })
             .tag(1)
             
@@ -146,6 +188,12 @@ struct MySolutionsView: View {
         .onAppear {
             print("onAppear ran")
             getMeds()
+        }
+        .fullScreenCover(isPresented: $showSolutionCalculator) {
+            if let safeSolution = viewModel.selectedSolution {
+                MySolutionCalculatorView(selectedSolution: safeSolution)
+            }
+            
         }
     }
     

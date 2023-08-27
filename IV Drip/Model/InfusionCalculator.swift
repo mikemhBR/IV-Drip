@@ -19,6 +19,36 @@ class InfusionCalculator {
         return miligrams/1_000
     }
     
+    static func getAdjustedWeight(inputWeight: Double, inputWeightFactor: WeightOptions) -> Double {
+        switch inputWeightFactor {
+        case .grams:
+            return inputWeight*1000
+        case .miligrams:
+            return inputWeight
+        case .micrograms:
+            return inputWeight/1000
+        }
+    }
+    static func getPushDose(desiredPushDose: Double, desiredPushMethod: PushDoseOptions, solutionConcentrationMgMl: Double, patientWeight: Double?) -> Double {
+        
+        switch desiredPushMethod {
+        case .mg:
+            return desiredPushDose/solutionConcentrationMgMl
+        case .mcg:
+            return (desiredPushDose/1000)/solutionConcentrationMgMl
+        case .mgKg:
+            guard let safeWeight = patientWeight else {return 999}
+            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+        case .mcgKg:
+            guard let safeWeight = patientWeight else {return 999}
+            return ((desiredPushDose/1000)*safeWeight)/solutionConcentrationMgMl
+        case .unitsKg:
+            guard let safeWeight = patientWeight else {return 999}
+            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+        }
+    }
+    
+    
     static func getInfusionRate(desiredInfusionRate: Double, desiredRateMethod: ConcentrationOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
         
         //Solution Concentration must be in mg/ml
