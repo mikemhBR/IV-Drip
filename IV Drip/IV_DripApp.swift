@@ -14,6 +14,10 @@ struct IV_DripApp: App {
     @StateObject private var navigationModel = NavigationModel.shared
     @StateObject private var dbBrain = DBBrain.shared
     
+    init() {
+        UITableView.appearance().backgroundColor = UIColor.green
+        
+    }
     var body: some Scene {
         WindowGroup {
             ContentView()

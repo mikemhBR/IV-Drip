@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		272BB91E2A8B7C4900A8788A /* HorizontalWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */; };
+		273B13512A9C794700043B0D /* MyListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273B13502A9C794700043B0D /* MyListsView.swift */; };
+		273B13532A9C84E000043B0D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273B13522A9C84E000043B0D /* Color.swift */; };
+		27483F8E2A9D379C005EBD2A /* ListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27483F8D2A9D379C005EBD2A /* ListDetailView.swift */; };
 		27661B6A2A8B8381005D07C9 /* AddMedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27661B692A8B8381005D07C9 /* AddMedView.swift */; };
 		2794FE9C2A88BD8400579592 /* IV_DripApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FE9B2A88BD8400579592 /* IV_DripApp.swift */; };
 		2794FE9E2A88BD8400579592 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794FE9D2A88BD8400579592 /* ContentView.swift */; };
@@ -36,6 +39,8 @@
 		27A3F5BE2A94BDA10007BC7C /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */; };
 		27A3F5C02A9564D90007BC7C /* AmpouleNumberRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */; };
 		27A3F5C32A960E730007BC7C /* InfusionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */; };
+		27ABDBA72A9D250B00D4A898 /* CreateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABDBA62A9D250B00D4A898 /* CreateListView.swift */; };
+		27ABDBA92A9D270800D4A898 /* CreateListTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */; };
 		27B0DD732A8974D300C69474 /* AddCustomSolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */; };
 		27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD742A89763600C69474 /* LayoutExtensions.swift */; };
 		27B46D4F2A988FA5008101C5 /* SolutionListTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */; };
@@ -65,6 +70,9 @@
 
 /* Begin PBXFileReference section */
 		272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalWheelPicker.swift; sourceTree = "<group>"; };
+		273B13502A9C794700043B0D /* MyListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListsView.swift; sourceTree = "<group>"; };
+		273B13522A9C84E000043B0D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		27483F8D2A9D379C005EBD2A /* ListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailView.swift; sourceTree = "<group>"; };
 		27661B692A8B8381005D07C9 /* AddMedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMedView.swift; sourceTree = "<group>"; };
 		2794FE982A88BD8400579592 /* IV Drip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IV Drip.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2794FE9B2A88BD8400579592 /* IV_DripApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IV_DripApp.swift; sourceTree = "<group>"; };
@@ -96,6 +104,8 @@
 		27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmpouleNumberRowView.swift; sourceTree = "<group>"; };
 		27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfusionCalculator.swift; sourceTree = "<group>"; };
+		27ABDBA62A9D250B00D4A898 /* CreateListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListView.swift; sourceTree = "<group>"; };
+		27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListTileView.swift; sourceTree = "<group>"; };
 		27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomSolutionView.swift; sourceTree = "<group>"; };
 		27B0DD742A89763600C69474 /* LayoutExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutExtensions.swift; sourceTree = "<group>"; };
 		27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionListTileView.swift; sourceTree = "<group>"; };
@@ -131,6 +141,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		273B134F2A9C792C00043B0D /* My Lists */ = {
+			isa = PBXGroup;
+			children = (
+				273B13502A9C794700043B0D /* MyListsView.swift */,
+				27ABDBA62A9D250B00D4A898 /* CreateListView.swift */,
+				27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */,
+				27483F8D2A9D379C005EBD2A /* ListDetailView.swift */,
+			);
+			path = "My Lists";
+			sourceTree = "<group>";
+		};
 		2794FE8F2A88BD8400579592 = {
 			isa = PBXGroup;
 			children = (
@@ -201,6 +222,7 @@
 				27B0DD742A89763600C69474 /* LayoutExtensions.swift */,
 				27D960D72A8CC317002121F3 /* DBBrain.swift */,
 				27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */,
+				273B13522A9C84E000043B0D /* Color.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -208,11 +230,12 @@
 		2794FECB2A88BE1100579592 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				2794FED82A88D23700579592 /* HomeView.swift */,
+				273B134F2A9C792C00043B0D /* My Lists */,
 				27FF2FE22A9B4D4400240AF1 /* Components */,
 				27B46D4D2A988B6C008101C5 /* My Solutions */,
 				27A3F5C12A95FDE10007BC7C /* Input Rows */,
 				27A3F5B92A94BD1E0007BC7C /* Custom Drugs */,
-				2794FED82A88D23700579592 /* HomeView.swift */,
 				2794FEDA2A88D3DC00579592 /* CalculatorView.swift */,
 				27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */,
 			);
@@ -256,10 +279,10 @@
 		27B46D4D2A988B6C008101C5 /* My Solutions */ = {
 			isa = PBXGroup;
 			children = (
+				27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */,
 				2794FEE82A8924A400579592 /* MySolutionsView.swift */,
 				27FF2FE52A9B53B300240AF1 /* My Meds */,
 				27A3F5BA2A94BD350007BC7C /* Custom Solution */,
-				27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */,
 				27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */,
 			);
 			path = "My Solutions";
@@ -418,7 +441,9 @@
 				2794FEA52A88BD8700579592 /* Persistence.swift in Sources */,
 				2794FEE72A88E9A100579592 /* VolumeRowView.swift in Sources */,
 				2794FEE92A8924A400579592 /* MySolutionsView.swift in Sources */,
+				27483F8E2A9D379C005EBD2A /* ListDetailView.swift in Sources */,
 				2794FEA82A88BD8700579592 /* IV_Drip.xcdatamodeld in Sources */,
+				27ABDBA92A9D270800D4A898 /* CreateListTileView.swift in Sources */,
 				2794FE9E2A88BD8400579592 /* ContentView.swift in Sources */,
 				2794FEDB2A88D3DC00579592 /* CalculatorView.swift in Sources */,
 				27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */,
@@ -432,11 +457,14 @@
 				27B0DD732A8974D300C69474 /* AddCustomSolutionView.swift in Sources */,
 				27A3F5C02A9564D90007BC7C /* AmpouleNumberRowView.swift in Sources */,
 				2794FED52A88C50F00579592 /* IntInputRowView.swift in Sources */,
+				273B13532A9C84E000043B0D /* Color.swift in Sources */,
 				27B46D532A98BAF3008101C5 /* PushDoseRowView.swift in Sources */,
 				2794FED32A88C38C00579592 /* IntWheelPicker.swift in Sources */,
 				2794FED72A88D12600579592 /* NavigationModel.swift in Sources */,
 				27B46D4F2A988FA5008101C5 /* SolutionListTileView.swift in Sources */,
 				2794FE9C2A88BD8400579592 /* IV_DripApp.swift in Sources */,
+				27ABDBA72A9D250B00D4A898 /* CreateListView.swift in Sources */,
+				273B13512A9C794700043B0D /* MyListsView.swift in Sources */,
 				2794FECF2A88BE8C00579592 /* DecimalWheelPicker.swift in Sources */,
 				27A3F5C32A960E730007BC7C /* InfusionCalculator.swift in Sources */,
 				2794FEDD2A88E2E500579592 /* WeightPicker.swift in Sources */,

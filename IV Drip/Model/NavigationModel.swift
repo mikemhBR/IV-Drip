@@ -36,4 +36,6 @@ enum Modals {
     case mySolutions
     case addCustomSolution
     case addMedication
+    case myLists
+    case createNewList
 }

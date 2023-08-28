@@ -17,6 +17,7 @@ struct SolutionListClass: Identifiable {
     let volumePerAmp: Double
     let numberAmps: Double
     let dilutionVolume: Double
+    var isSelected = false
     
     init(solutionEntity: CustomSolutionEntity) {
         self.solutionEntity = solutionEntity
@@ -46,13 +47,17 @@ class MySolutionsViewModel: ObservableObject {
     var dbBrain = DBBrain.shared
     
     @Published var solutionList = [SolutionListClass]()
+    @Published var medicationList = [MedicationEntity]()
     @Published var selectedSolution: SolutionListClass?
     
     init() {
         getSolutionList()
+        getMeds()
     }
     
     func getSolutionList() {
+        solutionList = []
+        
         var databaseSolutionList = [CustomSolutionEntity]()
         do {
             databaseSolutionList = try dbBrain.getAllSolutionsList()
@@ -64,6 +69,16 @@ class MySolutionsViewModel: ObservableObject {
             solutionList.append(SolutionListClass(solutionEntity: solution))
         }
     }
+    
+    func deleteSolution(toDelete: CustomSolutionEntity) {
+        dbBrain.deleteCustomSolution(toDelete: toDelete)
+        getSolutionList()
+    }
+    
+    func getMeds() {
+        medicationList = dbBrain.getAllMedications()
+    }
+    
 }
 
 struct MySolutionsView: View {
@@ -73,122 +88,149 @@ struct MySolutionsView: View {
     @StateObject private var viewModel = MySolutionsViewModel()
     
     @State private var currentTab = 0
-    
-    @State private var medicationList = [MedicationEntity]()
-    
+        
     @State private var showSolutionCalculator = false
     
     var body: some View {
-        TabView(selection: $currentTab) {
+        VStack {
+            SectionHeaderView(sectionTitle: currentTab == 0 ? "My Solutions" : "My Medications") {
+                withAnimation {
+                    navigationModel.navigateTo(to: .homeView)
+                }
+            }
             
-            VStack {
-                SectionHeaderView(sectionTitle: "My Solutions") {
-                    withAnimation {
-                        navigationModel.navigateTo(to: .homeView)
-                    }
-                }
+            TabView(selection: $currentTab) {
                 
-                Button {
-                    withAnimation {
-                        navigationModel.navigateTo(to: .addCustomSolution)
+                VStack (spacing: 0) {
+                    
+                    Button {
+                        withAnimation {
+                            navigationModel.navigateTo(to: .addCustomSolution)
+                        }
+                    } label: {
+                        Label {
+                            Text("Create Solution")
+                        } icon: {
+                            Image(systemName: "plus")
+                        }
                     }
-                } label: {
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    
+                    List {
+                        ForEach(viewModel.solutionList, id: \.id) { solution in
+                            SolutionListTileView(solution: solution)
+                                .onTapGesture {
+                                    
+                                    viewModel.selectedSolution = solution
+                                    
+                                    withAnimation {
+                                        showSolutionCalculator = true
+                                    }
+                                    
+                                }
+                                .swipeActions {
+                                    Button {
+                                        if let safeSolution = solution.solutionEntity {
+                                            viewModel.deleteSolution(toDelete: safeSolution)
+                                        }
+                                        
+                                        
+                                    } label: {
+                                        Image(systemName: "trash.circle.fill")
+                                    }
+
+                                }
+                                .frame(maxWidth: .infinity)
+                                .listStyle(PlainListStyle())
+                                .listRowBackground(Color.theme.background)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        }
+                        
+                        
+                    }
+                    .scrollContentBackground(.hidden)
+
+                    
+                    Spacer()
+                    
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.theme.background)
+                .tabItem({
                     Label {
-                        Text("Create Solution")
+                        Text("Solutions")
                     } icon: {
-                        Image(systemName: "plus")
+                        Image(systemName: "heart.fill")
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                })
+                .tag(0)
                 
-                ForEach(viewModel.solutionList, id: \.id) { solution in
-                    SolutionListTileView(solution: solution)
-                        .onTapGesture {
-                            
-                            viewModel.selectedSolution = solution
-                            
-                            withAnimation {
-                                showSolutionCalculator = true
+                VStack {
+                    
+                    Button {
+                        navigationModel.navigateTo(to: .addMedication)
+                    } label: {
+                        Label {
+                            Text("Create Medication")
+                        } icon: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    
+                    List {
+                        ForEach(viewModel.medicationList, id: \.self) { med in
+                            VStack (alignment: .leading) {
+                                Text(med.med_name ?? "error")
+                                    .fixedSize()
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(Color("Text"))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text("\(String(format: "%.1f", med.med_weight))mg / \(String(format: "%.1f", med.med_volume))ml")
+                                    .fixedSize()
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(Color("Text"))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(Constants.Layout.kPadding/2)
+                            .background(Color.theme.rowBackground)
+                            .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                            .listStyle(PlainListStyle())
+                            .listRowBackground(Color.theme.background)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                             
                         }
-                }
-                .padding(.horizontal, Constants.Layout.kPadding/2)
-                
-                Spacer()
-                
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(Constants.Layout.kPadding/2)
-            .background(Color("Background 200"))
-            .tabItem({
-                Label {
-                    Text("Solutions")
-                } icon: {
-                    Image(systemName: "heart.fill")
-                }
-            })
-            .tag(0)
-            
-            VStack {
-                SectionHeaderView(sectionTitle: "My Medications") {
-                    withAnimation {
-                        navigationModel.navigateTo(to: .homeView)
-                    }
-                }
-                
-                Button {
-                    navigationModel.navigateTo(to: .addMedication)
-                } label: {
-                    Label {
-                        Text("Create Medication")
-                    } icon: {
-                        Image(systemName: "plus")
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                
-                ForEach(medicationList, id: \.self) { med in
-                    VStack (alignment: .leading) {
-                        Text(med.med_name ?? "error")
-                            .fixedSize()
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(Color("Text"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text("\(String(format: "%.1f", med.med_weight))mg / \(String(format: "%.1f", med.med_volume))ml")
-                            .fixedSize()
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(Color("Text"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
                     }
-                    .padding(Constants.Layout.kPadding/2)
-                    .background(Color("Row Background"))
-                    .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
-                    .padding(.vertical, 2)
+                    .scrollContentBackground(.hidden)
+                    .frame(maxWidth: .infinity)
+                    
+                    
+                    Spacer()
+                    
                 }
+                .background(Color.theme.background)
+                .tabItem({
+                    Label {
+                        Text("Meds")
+                    } icon: {
+                        Image(systemName: "heart.fill")
+                    }
+                    
+                })
+                .tag(1)
                 
-                Spacer()
                 
             }
-            .padding(Constants.Layout.kPadding/2)
-            .background(Color("Background 200"))
-            .tabItem({
-                Label {
-                    Text("Meds")
-                } icon: {
-                    Image(systemName: "heart.fill")
-                }
-                
-            })
-            .tag(1)
-            
-            
         }
-        .onAppear {
-            print("onAppear ran")
-            getMeds()
-        }
+        .padding(.horizontal, Constants.Layout.kPadding/2)
+        .background(Color.theme.background)
+        
         .fullScreenCover(isPresented: $showSolutionCalculator) {
             if let safeSolution = viewModel.selectedSolution {
                 MySolutionCalculatorView(selectedSolution: safeSolution)
@@ -197,9 +239,7 @@ struct MySolutionsView: View {
         }
     }
     
-    func getMeds() {
-        medicationList = dbBrain.getAllMedications()
-    }
+    
 }
 
 struct MySolutionsView_Previews: PreviewProvider {

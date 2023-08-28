@@ -26,6 +26,15 @@ struct HomeView: View {
             } label: {
                 Text("My Solutions")
             }
+            
+            Button {
+                withAnimation {
+                    navigationModel.navigateTo(to: .myLists)
+                }
+            } label: {
+                Text("My Lists")
+            }
+
 
 
         }

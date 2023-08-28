@@ -11,6 +11,8 @@ struct MySolutionCalculatorView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @AppStorage(Constants.AppStorage.patientWeight) var storedPatientWeight = 0
+    
     @EnvironmentObject var navigationModel: NavigationModel
     
     let selectedSolution: SolutionListClass
@@ -33,6 +35,13 @@ struct MySolutionCalculatorView: View {
     @State private var infusionRateResultString = "-"
     @State private var pushDoseResultString = "-"
     
+    @State private var inverseInfusionCalculator = false
+    @State private var currentInfusionRate = 0.0
+    @State private var infusionRateFactor: InfusionRateOptions = .mlHour
+    @State private var desiredInversionInfusionFactor: ConcentrationOptions = .mcgKgMin
+    @State private var inverseInfusionRateString = "-"
+    
+    
     var body: some View {
         VStack (alignment: .leading, spacing: Constants.Layout.kPadding) {
             SectionHeaderView(sectionTitle: "Custom Solution Calculator") {
@@ -51,8 +60,11 @@ struct MySolutionCalculatorView: View {
                     Text("Patient Weight")
                         .sectionHeaderStyle()
                     
-                    HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, patientWeight: $patientWeight)
+                    HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, initialWeight: storedPatientWeight, patientWeight: $patientWeight)
                     
+                    
+                    Spacer()
+                        .frame(height: 1)
                     
                     Picker("Select Calculator Type", selection: $selectedTab) {
                         Text("Infusion Rate").tag(0)
@@ -63,26 +75,51 @@ struct MySolutionCalculatorView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     
                     if selectedTab == 0 {
-                        ConcentrationRowView(itemTitle: "Desired Rate",
-                                             pickerIntCases: 3,
-                                             pickerDecimalCases: 1,
-                                             showPickerWheel: $showConcentrationWheelPicker,
-                                             userValue: $desiredRateField,
-                                             selectedConcentrationOption: $selectedConcentrationFactor,
-                                             currentlySelectedRow: $currentlySelectedRow,
-                                             rowTag: .desiredRate
-                        ) {
-                            withAnimation {
-                                currentlySelectedRow = nil
-                                showConcentrationWheelPicker = false
+                        HStack (spacing: 8) {
+                            Image(systemName: "arrow.up.arrow.down.square")
+                                .onTapGesture {
+                                    withAnimation {
+                                        inverseInfusionCalculator.toggle()
+                                    }
+                                }
+                            
+                            if !inverseInfusionCalculator {
+                                ConcentrationRowView(itemTitle: "Desired Rate",
+                                                     pickerIntCases: 3,
+                                                     pickerDecimalCases: 1,
+                                                     showPickerWheel: $showConcentrationWheelPicker,
+                                                     userValue: $desiredRateField,
+                                                     selectedConcentrationOption: $selectedConcentrationFactor,
+                                                     currentlySelectedRow: $currentlySelectedRow,
+                                                     rowTag: .desiredRate
+                                ) {
+                                    withAnimation {
+                                        currentlySelectedRow = nil
+                                        showConcentrationWheelPicker = false
+                                    }
+                                }
+                                .onTapGesture {
+                                    withAnimation {
+                                        currentlySelectedRow = .desiredRate
+                                    }
+                                }
+                            } else {
+                                InfusionRowView(
+                                    itemTitle: "Current Infusion",
+                                    pickerIntCases: 3,
+                                    pickerDecimalCases: 1,
+                                    userValue: $currentInfusionRate,
+                                    selectedInfusionOption: $infusionRateFactor,
+                                    currentlySelectedRow: $currentlySelectedRow) {
+                                        
+                                    }
                             }
+                            
                         }
-                        .onTapGesture {
-                            withAnimation {
-                                currentlySelectedRow = .desiredRate
-                            }
-                        }
+                        
                     } else {
+                        
+                        
                         PushDoseRowView(itemTitle: "Push Dose",
                                         pickerIntCases: 3,
                                         pickerDecimalCases: 1,
@@ -98,19 +135,29 @@ struct MySolutionCalculatorView: View {
                         }
                                         .onTapGesture {
                                             withAnimation {
+                                                print("single tap")
                                                 currentlySelectedRow = .desiredRate
                                             }
                                         }
+                        
+                        
                         
                     }
                     
                     Divider()
                     
                     if selectedTab == 0 {
-                        infusionResultView
+                        if !inverseInfusionCalculator {
+                            infusionResultView
+                        } else {
+                            inverseInfusionResultView
+                        }
+                        
                     } else {
                         pushDoseResultView
                     }
+                    
+                    infusionRangeView
                 }
                 
                 
@@ -125,8 +172,10 @@ struct MySolutionCalculatorView: View {
             getInfusionRate()
         }
         .onChange(of: patientWeight) { newValue in
+            print(patientWeight)
             getInfusionRate()
             getPushDose()
+            getInverseInfusionRate()
         }
         .onChange(of: desiredInfusionRateFactor) { newValue in
             getInfusionRate()
@@ -140,9 +189,26 @@ struct MySolutionCalculatorView: View {
         .onChange(of: selectedPushDoseFactor) { newValue in
             getPushDose()
         }
+        .onChange(of: infusionRateFactor, perform: { newValue in
+            getInverseInfusionRate()
+        })
+        .onChange(of: desiredInversionInfusionFactor, perform: { newValue in
+            getInverseInfusionRate()
+        })
+        .onChange(of: currentInfusionRate, perform: { newValue in
+            getInverseInfusionRate()
+        })
         .onAppear() {
-            print(solutionConcentration())
+            print("onAppear storedPatientWeight: \(storedPatientWeight)")
+            patientWeight = Double(storedPatientWeight)
+            print("onAppear before patientWeight: \(patientWeight)")
         }
+        .onDisappear {
+            print("onDisappear before patientWeight: \(patientWeight)")
+            storedPatientWeight = Int(patientWeight.rounded(.down))
+            print("onDisappear before storedPatientWeight: \(storedPatientWeight)")
+        }
+        
     }
     
     var infusionResultView: some View {
@@ -173,6 +239,57 @@ struct MySolutionCalculatorView: View {
         }
     }
     
+    var inverseInfusionResultView: some View {
+        VStack {
+            VStack {
+                Text("Infusion Rate")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(Color("Text"))
+                
+                Text(inverseInfusionRateString)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(Color("Text"))
+                
+            }
+            .padding(Constants.Layout.kPadding)
+            .background(Color.white)
+            .cornerRadius(Constants.Layout.cornerRadius.medium.rawValue)
+            
+            
+            Menu {
+                Picker("Method", selection: $desiredInversionInfusionFactor) {
+                    ForEach(ConcentrationOptions.allCases, id: \.self) { option in
+                        Text(option.rawValue)
+                            .font(.system(size: 14))
+                            
+                    }
+                }
+            } label: {
+                Text(desiredInversionInfusionFactor.rawValue)
+                    .modifier(InputRowButtonModifier(buttonWidth: 120))
+                    .frame(width: 120)
+            }
+            
+            
+        }
+    }
+    
+    func getInverseInfusionRate() {
+        let solutionConcentration = solutionConcentration()
+        
+        let result = InfusionCalculator.getRateFromInfusion(
+            currentInfusionRate: currentInfusionRate,
+            infusionRateFactor: infusionRateFactor,
+            solutionConcentrationMgMl: solutionConcentration,
+            patientWeight: patientWeight,
+            outputRateFactor: desiredInversionInfusionFactor)
+        
+        DispatchQueue.main.async {
+            inverseInfusionRateString = String(format: "%.2f", result) + " " + desiredInversionInfusionFactor.rawValue
+            print(inverseInfusionRateString)
+        }
+    }
+    
     var pushDoseResultView: some View {
         VStack {
             VStack {
@@ -191,6 +308,53 @@ struct MySolutionCalculatorView: View {
             
             
         }
+    }
+    
+    @ViewBuilder
+    var infusionRangeView: some View {
+        if let safeMin = selectedSolution.solutionEntity?.solution_min, let safeMax = selectedSolution.solutionEntity?.solution_max  {
+            
+            if safeMin == 0.0 || safeMax == 0.0 {
+                Color.clear
+            } else {
+                let outputRateFactor: InfusionRateOptions = desiredInfusionRateFactor == 0 ? .mlHour : .mlMin
+                
+                let minRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMin, desiredRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
+                
+                let maxRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMax, desiredRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
+                
+                VStack (alignment: .leading) {
+                    Text("Infusion Range")
+                        .sectionHeaderStyle()
+                    
+                    HStack {
+                        VStack (alignment: .leading) {
+                            Text("Mininum")
+                            
+                            Text(String(format: "%.2f", safeMin))
+                            
+                            Text(String(format: "%.1f", minRate) + " " + outputRateFactor.rawValue)
+                        }
+                        
+                        Spacer()
+                        
+                        VStack (alignment: .leading){
+                            Text("Maximum")
+                            
+                            Text(String(format: "%.2f", safeMax))
+                            
+                            Text(String(format: "%.1f", maxRate) + " " + outputRateFactor.rawValue)
+                        }
+                    }
+                }
+            }
+            
+            
+        } else {
+            Color.clear
+        }
+        
+        
     }
     
     func solutionConcentration() -> Double {

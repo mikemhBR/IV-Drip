@@ -7,9 +7,7 @@
 
 import Foundation
 
-enum SavingErrors: Error {
-    case saveCustomSolutionError
-}
+
 enum ConcentrationOptions: String, CaseIterable {
     
     case mcgKgMin = "mcg/kg/min"

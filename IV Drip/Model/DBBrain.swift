@@ -9,8 +9,9 @@ import CoreData
 import SwiftUI
 
 enum DatabaseError: Error {
-    case fetchError
+    case fetchError, saveCustomSolutionError, saveNewListError
 }
+
 
 class DBBrain: ObservableObject {
 
@@ -71,6 +72,11 @@ class DBBrain: ObservableObject {
         
     }
     
+    func deleteCustomSolution(toDelete: CustomSolutionEntity) {
+        context.delete(toDelete)
+        saveDataToContext()
+    }
+    
     func saveCustomSolution(solutionName: String, mainActiveComponent: String, drugWeightPerAmp: Double, drugVolumePerAmp: Double, numberAmps: Double, dilutionVolume: Double, solutionType: Int, minimumDose: Double?, maximumDose: Double?, solutionObservation: String) throws {
         
         let newSolution = CustomSolutionEntity(context: context)
@@ -96,9 +102,85 @@ class DBBrain: ObservableObject {
         do {
             try context.save()
         } catch {
-            throw SavingErrors.saveCustomSolutionError
+            throw DatabaseError.saveCustomSolutionError
         }
         
+    }
+    
+    func createNewList(listName: String, listUUID: String) throws -> SolutionListEntity {
+        let newList = SolutionListEntity(context: context)
+        newList.list_name = listName
+        newList.list_uuid = listUUID
+        
+        do {
+            try context.save()
+        } catch {
+            throw DatabaseError.saveNewListError
+        }
+                
+        return newList
+    }
+    
+    func saveSolutionToList(list: SolutionListEntity, solution: CustomSolutionEntity) throws {
+        let listItem = SolutionListFact(context: context)
+        listItem.list_uuid = list.list_uuid
+        listItem.solution_uuid = solution.solution_uuid
+        listItem.factToList = list
+        listItem.factToSolution = solution
+        
+        do {
+            try context.save()
+        } catch {
+            throw DatabaseError.saveNewListError
+        }
+        
+    }
+    
+    func getAllLists() throws -> [SolutionListEntity] {
+        var allLists = [SolutionListEntity]()
+        
+        let request: NSFetchRequest<SolutionListEntity> = SolutionListEntity.fetchRequest()
+        
+        do {
+            allLists = try context.fetch(request)
+        } catch {
+            throw DatabaseError.fetchError
+        }
+        
+        return allLists
+    }
+    
+    func getSolutionsFromList(listUUID: String) throws -> [CustomSolutionEntity] {
+        print("1")
+        var solutionFactList = [SolutionListFact]()
+        
+        let request: NSFetchRequest<SolutionListFact> = SolutionListFact.fetchRequest()
+        request.predicate = NSPredicate(format: "list_uuid = %@", listUUID)
+        
+        do {
+            solutionFactList = try context.fetch(request)
+        } catch {
+            throw DatabaseError.fetchError
+        }
+        
+        var solutionList = [CustomSolutionEntity]()
+        
+        let solutionRequest: NSFetchRequest<CustomSolutionEntity> = CustomSolutionEntity.fetchRequest()
+        
+        for solutionUUID in solutionFactList {
+            solutionRequest.predicate = NSPredicate(format: "solution_uuid = %@", solutionUUID.solution_uuid!)
+            
+            do {
+                let completeSolution = try context.fetch(solutionRequest)
+                solutionList.append(completeSolution.first!)
+            } catch {
+                continue
+            }
+        }
+        
+        print(solutionList.count)
+        
+        return solutionList
     }
     
     func saveDataToContext() {

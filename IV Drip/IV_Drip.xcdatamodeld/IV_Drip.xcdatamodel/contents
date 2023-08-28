@@ -9,6 +9,7 @@
         <attribute name="group_uuid" optional="YES" attributeType="String"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="main_active" optional="YES" attributeType="String"/>
+        <attribute name="min_max_factor" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solution_category" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solution_def_code" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solution_max" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -18,9 +19,7 @@
         <attribute name="solution_type" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="solution_uuid" attributeType="String"/>
         <relationship name="category" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SolutionCategoryEntity" inverseName="custom_solution" inverseEntity="SolutionCategoryEntity"/>
-    </entity>
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
-        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="solutionToList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SolutionListFact" inverseName="factToSolution" inverseEntity="SolutionListFact"/>
     </entity>
     <entity name="MedicationEntity" representedClassName="MedicationEntity" syncable="YES" codeGenerationType="class">
         <attribute name="dose_reference" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -40,5 +39,16 @@
         <attribute name="category_name" attributeType="String"/>
         <attribute name="category_uuid" attributeType="String"/>
         <relationship name="custom_solution" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CustomSolutionEntity" inverseName="category" inverseEntity="CustomSolutionEntity"/>
+    </entity>
+    <entity name="SolutionListEntity" representedClassName="SolutionListEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="list_name" optional="YES" attributeType="String"/>
+        <attribute name="list_uuid" optional="YES" attributeType="String"/>
+        <relationship name="listToFact" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SolutionListFact"/>
+    </entity>
+    <entity name="SolutionListFact" representedClassName="SolutionListFact" syncable="YES" codeGenerationType="class">
+        <attribute name="list_uuid" optional="YES" attributeType="String"/>
+        <attribute name="solution_uuid" optional="YES" attributeType="String"/>
+        <relationship name="factToList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SolutionListEntity"/>
+        <relationship name="factToSolution" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CustomSolutionEntity" inverseName="solutionToList" inverseEntity="CustomSolutionEntity"/>
     </entity>
 </model>

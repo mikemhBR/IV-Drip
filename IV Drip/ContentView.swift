@@ -15,9 +15,9 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \CustomSolutionEntity.solution_name, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var items: FetchedResults<CustomSolutionEntity>
 
     var body: some View {
         ZStack {
@@ -31,7 +31,12 @@ struct ContentView: View {
             case .addCustomSolution:
                 AddCustomSolutionView()
             case .addMedication:
-                AddMedView()            }
+                AddMedView()
+            case .myLists:
+                MyListsView()
+            case .createNewList:
+                CreateListView()
+            }
             
         }
         
@@ -39,8 +44,8 @@ struct ContentView: View {
 
     private func addItem() {
         withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
+            let newItem = CustomSolutionEntity(context: viewContext)
+            newItem.solution_name = "kajdfljaj"
 
             do {
                 try viewContext.save()

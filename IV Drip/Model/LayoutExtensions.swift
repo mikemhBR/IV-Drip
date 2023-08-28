@@ -81,11 +81,13 @@ struct InputRowTextFieldModifier: ViewModifier {
 }
 
 struct InputRowButtonModifier: ViewModifier {
+    var buttonWidth: CGFloat = 80
+    
     func body(content: Content) -> some View {
         content
             .fixedSize(horizontal: true, vertical: false)
             .padding(Constants.Layout.kPadding/2)
-            .frame(width: 80, height: Constants.Layout.textFieldHeight)
+            .frame(width: buttonWidth, height: Constants.Layout.textFieldHeight)
             .background(Color("Accent Blue").opacity(0.2))
             .font(.system(size: 12))
             .cornerRadius(Constants.Layout.kPadding/2)

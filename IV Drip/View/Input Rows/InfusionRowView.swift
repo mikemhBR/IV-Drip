@@ -33,6 +33,7 @@ struct InfusionRowView: View {
                 Text(itemTitle)
                     .font(.system(size: Constants.Layout.fontSize.inputRow.rawValue, weight: .bold))
                     .foregroundColor(Color("Text"))
+                    .fixedSize()
                 
                 Spacer()
                 
