@@ -9,7 +9,7 @@ import SwiftUI
 
 class CreateListViewModel: ObservableObject {
     @Published var solutionList = [SolutionListClass]()
-    @Published var listName = "List Name"
+    @Published var listName = "<insert list name>"
     
     var dbBrain = DBBrain.shared
     
@@ -33,7 +33,6 @@ class CreateListViewModel: ObservableObject {
     }
     
     func saveList() throws {
-        var newList = [SolutionListClass]()
         
         let listUUID = UUID().uuidString
         
@@ -68,14 +67,21 @@ struct CreateListView: View {
     @FocusState private var nameIsFocused
     
     var body: some View {
-        VStack {
+        VStack (spacing: 0) {
             SectionHeaderView(sectionTitle: "Create List") {
                 withAnimation {
                     navigationModel.navigateTo(to: .myLists)
                 }
             }
             
-            TextField("List Name", text: $viewModel.listName)
+            Spacer()
+                .frame(height: Constants.Layout.kPadding)
+            
+            Text("List Name")
+                .sectionHeaderStyle()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            TextField("", text: $viewModel.listName)
                 .font(.system(size: 14))
                 .foregroundColor(Color.theme.primaryText)
                 .frame(height: 44)
@@ -83,6 +89,13 @@ struct CreateListView: View {
                 .padding(.horizontal, Constants.Layout.kPadding/2)
                 .background(Color.white)
                 .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+            
+            Spacer()
+                .frame(height: Constants.Layout.kPadding)
+            
+            Text("Solutions")
+                .sectionHeaderStyle()
+                .frame(maxWidth: .infinity, alignment: .leading)
             
             List {
                 ForEach($viewModel.solutionList, id: \.id) { $solution in

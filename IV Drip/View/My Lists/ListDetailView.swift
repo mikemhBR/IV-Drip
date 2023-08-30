@@ -11,6 +11,7 @@ import SwiftUI
 struct ListDetailView: View {
     @EnvironmentObject var dbBrain: DBBrain
     @EnvironmentObject var navigationModel: NavigationModel
+    @Environment(\.dismiss) var dismiss
     
     @AppStorage(Constants.AppStorage.patientWeight) var storedPatientWeight = 0.0
     
@@ -23,21 +24,22 @@ struct ListDetailView: View {
     
     var body: some View {
         VStack {
-            SectionHeaderView(sectionTitle: "My Lists") {
+            SectionHeaderView(sectionTitle: selectedList.list_name ?? "My List") {
                 withAnimation {
-                    navigationModel.navigateTo(to: .myLists)
+                    dismiss()
                 }
             }
             
-            HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, initialWeight: initialWeight, patientWeight: $patientWeight)
-            VStack {
-                ForEach(solutionList) { solution in
-                    SolutionListTileView(solution: solution)
+            ScrollView (showsIndicators: false) {
+                HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, initialWeight: Int(storedPatientWeight), patientWeight: $patientWeight)
+                
+                VStack (spacing: Constants.Layout.kPadding){
+                    ForEach(solutionList) { solution in
+                        ListDetailComponent(solution: solution, patientWeight: patientWeight)
+                    }
                 }
             }
             
-            
-            Spacer()
             
         }
         .padding(.horizontal, Constants.Layout.kPadding/2)
@@ -47,7 +49,6 @@ struct ListDetailView: View {
                 initialWeight = Int(storedPatientWeight.rounded(.down))
                 patientWeight = Double(initialWeight)
             }
-            print("2")
             getSolutions()
         }
         
@@ -57,12 +58,10 @@ struct ListDetailView: View {
         var solutionListTemp = [SolutionListClass]()
         
         var databaseList = [CustomSolutionEntity]()
-        
         //TODO: safe unwrap
         databaseList = try! dbBrain.getSolutionsFromList(listUUID: selectedList.list_uuid!)
         
         for solution in databaseList {
-            
             solutionListTemp.append(SolutionListClass(solutionEntity: solution))
         }
         

@@ -29,13 +29,13 @@ struct ConcentrationRowView: View {
     let rowTag: RowType
     let buttonTapped: ()->()
     
-    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputTextField: String = "0.0", inputDouble: Double = 0.0, userValue: Binding<Double>, selectedConcentrationOption: Binding<ConcentrationOptions>, concentrationOption: ConcentrationOptions = .mcgKgMin, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
+    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputDouble: Double = 0.0, userValue: Binding<Double>, selectedConcentrationOption: Binding<ConcentrationOptions>, concentrationOption: ConcentrationOptions = .mcgKgMin, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
         self.itemTitle = itemTitle
         self.pickerIntCases = pickerIntCases
         self.pickerDecimalCases = pickerDecimalCases
         self._showPickerWheel = showPickerWheel
-        self.inputTextField = inputTextField
-        self.inputDouble = inputDouble
+        _inputDouble = State(initialValue: inputDouble)
+        _inputTextField = State(initialValue: String(format: "%.1f", inputDouble))
         self._userValue = userValue
         self._selectedConcentrationOption = selectedConcentrationOption
         self._currentlySelectedRow = currentlySelectedRow
@@ -120,9 +120,9 @@ struct ConcentrationRowView: View {
                 
             
         }
-        .padding(8)
+        .padding(Constants.Layout.kPadding/2)
         .background(Color("Row Background"))
-        .cornerRadius(8)
+        .cornerRadius(Constants.Layout.kPadding/2)
         .onChange(of: inputDouble) { newValue in
             inputTextField = String(format: "%.\(pickerDecimalCases)f", newValue)
             userValue = newValue

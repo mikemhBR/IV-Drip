@@ -53,8 +53,7 @@ struct AmpouleNumberRowView: View {
                     }
                     
                 })
-                    .font(.system(size: 16))
-                    
+                    .textFieldFont()
                     .foregroundColor(Color("Text"))
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.center)

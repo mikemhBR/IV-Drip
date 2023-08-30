@@ -33,13 +33,26 @@ struct PrimaryButtonConfig: ViewModifier {
     }
 }
 
-
-
-
 struct Caption3Title: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.system(size: 11, weight: .bold))
+            .foregroundColor(Color("Text"))
+    }
+}
+
+struct Caption2Title: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 12, weight: .bold))
+            .foregroundColor(Color("Text"))
+    }
+}
+
+struct CaptionTitle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 13, weight: .bold))
             .foregroundColor(Color("Text"))
     }
 }
@@ -67,11 +80,48 @@ struct SectionHeader: ViewModifier {
     }
 }
 
+struct TextFieldFont: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 16, weight: .light))
+            .foregroundColor(Color("Text"))
+    }
+}
+
+
+extension View {
+    func caption3Title() -> some View {
+        modifier(Caption3Title())
+    }
+    func caption2Title() -> some View {
+        modifier(Caption2Title())
+    }
+    
+    func captionTitle() -> some View {
+        modifier(CaptionTitle())
+    }
+    
+    func subHeadlineTitle() -> some View {
+        modifier(HeadlineTitle())
+    }
+    
+    func headlineTitle() -> some View {
+        modifier(HeadlineTitle())
+    }
+    
+    func sectionHeaderStyle() -> some View {
+        modifier(SectionHeader())
+    }
+    
+    func textFieldFont() -> some View {
+        modifier(TextFieldFont())
+    }
+}
+
 struct InputRowTextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 16))
-            .foregroundColor(Color("Text"))
+            .textFieldFont()
             .keyboardType(.decimalPad)
             .multilineTextAlignment(.center)
             .frame(width: 88, height: Constants.Layout.textFieldHeight)
@@ -91,22 +141,5 @@ struct InputRowButtonModifier: ViewModifier {
             .background(Color("Accent Blue").opacity(0.2))
             .font(.system(size: 12))
             .cornerRadius(Constants.Layout.kPadding/2)
-    }
-}
-extension View {
-    func caption3Title() -> some View {
-        modifier(Caption3Title())
-    }
-    
-    func subHeadlineTitle() -> some View {
-        modifier(HeadlineTitle())
-    }
-    
-    func headlineTitle() -> some View {
-        modifier(HeadlineTitle())
-    }
-    
-    func sectionHeaderStyle() -> some View {
-        modifier(SectionHeader())
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SolutionListClass: Identifiable {
+    
     let id = UUID()
     var solutionEntity: CustomSolutionEntity?
     let solutionName: String
@@ -17,6 +18,10 @@ struct SolutionListClass: Identifiable {
     let volumePerAmp: Double
     let numberAmps: Double
     let dilutionVolume: Double
+    
+    //TODO: check if minDose and maxDose can be "let"
+    var minDose: Double?
+    var maxDose: Double?
     var isSelected = false
     
     init(solutionEntity: CustomSolutionEntity) {
@@ -28,9 +33,22 @@ struct SolutionListClass: Identifiable {
         self.volumePerAmp = solutionEntity.drug_volume_amp
         self.numberAmps = solutionEntity.amp_number
         self.dilutionVolume = solutionEntity.dilution_volume
+        
+        if solutionEntity.solution_min > 0.0 {
+            self.minDose = solutionEntity.solution_min
+        } else {
+            self.minDose = nil
+        }
+        if solutionEntity.solution_max > 0.0 {
+            self.maxDose = solutionEntity.solution_max
+        } else {
+            self.maxDose = nil
+        }
+        
+        
     }
     
-    init(solutionName: String, solutionType: Int, mainComponentName: String, mainComponentWeightPerAmp: Double, volumePerAmp: Double, numberAmps: Double, dilutionVolume: Double) {
+    init(solutionName: String, solutionType: Int, mainComponentName: String, mainComponentWeightPerAmp: Double, volumePerAmp: Double, numberAmps: Double, minDose: Double? = nil, maxDose: Double? = nil, dilutionVolume: Double) {
         self.solutionName = solutionName
         self.solutionType = solutionType
         self.mainComponentName = mainComponentName
@@ -38,12 +56,17 @@ struct SolutionListClass: Identifiable {
         self.volumePerAmp = volumePerAmp
         self.numberAmps = numberAmps
         self.dilutionVolume = dilutionVolume
+        self.minDose = minDose
+        self.maxDose = maxDose
     }
     
-    static var testData = SolutionListClass(solutionName: "Dobutamine Drip", solutionType: 1, mainComponentName: "Dobutamine", mainComponentWeightPerAmp: 250.0, volumePerAmp: 20.0, numberAmps: 4, dilutionVolume: 170.0)
+    static var testData = SolutionListClass(solutionName: "Norepinephrine Drip", solutionType: 1, mainComponentName: "Norepinephrine", mainComponentWeightPerAmp: 4.0, volumePerAmp: 4.0, numberAmps: 4, minDose: 0.05, maxDose: 1.0, dilutionVolume: 234.0)
+    
+    static var testDataDobutamine = SolutionListClass(solutionName: "Dobutamine Drip", solutionType: 1, mainComponentName: "Dobutamine", mainComponentWeightPerAmp: 250.0, volumePerAmp: 20.0, numberAmps: 4, minDose: 5.0, maxDose: 20.0, dilutionVolume: 170.0)
 }
 
 class MySolutionsViewModel: ObservableObject {
+    
     var dbBrain = DBBrain.shared
     
     @Published var solutionList = [SolutionListClass]()
@@ -82,6 +105,14 @@ class MySolutionsViewModel: ObservableObject {
 }
 
 struct MySolutionsView: View {
+    private enum PresentedSheet: Identifiable {
+        case calculatorView, editSolution, editMedication
+        
+        var id: PresentedSheet {
+            self
+        }
+    }
+    
     @EnvironmentObject var navigationModel: NavigationModel
     @EnvironmentObject var dbBrain: DBBrain
     
@@ -89,7 +120,9 @@ struct MySolutionsView: View {
     
     @State private var currentTab = 0
         
-    @State private var showSolutionCalculator = false
+    @State private var editSolutionsActive = false
+    
+    @State private var presentedSheet: PresentedSheet?
     
     var body: some View {
         VStack {
@@ -102,57 +135,90 @@ struct MySolutionsView: View {
             TabView(selection: $currentTab) {
                 
                 VStack (spacing: 0) {
-                    
-                    Button {
-                        withAnimation {
-                            navigationModel.navigateTo(to: .addCustomSolution)
+                    HStack {
+                        Button {
+                            withAnimation {
+                                editSolutionsActive.toggle()
+                            }
+                        } label: {
+                            Text("Edit Solutions")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(Color("Accent Red"))
                         }
-                    } label: {
-                        Label {
-                            Text("Create Solution")
-                        } icon: {
-                            Image(systemName: "plus")
+                        
+                        Spacer()
+                        
+                        Button {
+                            withAnimation {
+                                navigationModel.navigateTo(to: .addCustomSolution)
+                            }
+                        } label: {
+                            Label {
+                                Text("Create Solution")
+                            } icon: {
+                                Image(systemName: "plus")
+                            }
                         }
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
-                    .frame(maxWidth: .infinity, alignment: .trailing)
                     
-                    List {
-                        ForEach(viewModel.solutionList, id: \.id) { solution in
-                            SolutionListTileView(solution: solution)
-                                .onTapGesture {
-                                    
-                                    viewModel.selectedSolution = solution
-                                    
-                                    withAnimation {
-                                        showSolutionCalculator = true
+                    if viewModel.solutionList.isEmpty {
+                        Text("No saved solutions")
+                            .captionTitle()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(Constants.Layout.kPadding)
+                        
+                        Spacer()
+                        
+                    } else {
+                        List {
+                            ForEach(viewModel.solutionList, id: \.id) { solution in
+                                HStack (spacing: Constants.Layout.kPadding/2) {
+                                    if editSolutionsActive {
+                                        Image(systemName: "circle.fill")
+                                            .foregroundColor(Color("Accent Red"))
                                     }
-                                    
-                                }
-                                .swipeActions {
-                                    Button {
-                                        if let safeSolution = solution.solutionEntity {
-                                            viewModel.deleteSolution(toDelete: safeSolution)
+                                    SolutionListTileView(solution: solution)
+                                        .onTapGesture {
+                                            
+                                            viewModel.selectedSolution = solution
+                                            
+                                            if !editSolutionsActive {
+                                                withAnimation {
+                                                    presentedSheet = .calculatorView
+                                                }
+                                            } else {
+                                                presentedSheet = .editSolution
+                                            }
+                                            
+                                            
                                         }
+                                        .swipeActions {
+                                            Button {
+                                                if let safeSolution = solution.solutionEntity {
+                                                    viewModel.deleteSolution(toDelete: safeSolution)
+                                                }
+                                                
+                                                
+                                            } label: {
+                                                Image(systemName: "trash.circle.fill")
+                                            }
+                                            
+                                        }
+                                        .frame(maxWidth: .infinity)
                                         
-                                        
-                                    } label: {
-                                        Image(systemName: "trash.circle.fill")
-                                    }
-
                                 }
-                                .frame(maxWidth: .infinity)
-                                .listStyle(PlainListStyle())
-                                .listRowBackground(Color.theme.background)
-                                .listRowSeparator(.hidden)
-                                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                                
+                            }
+                            .listStyle(PlainListStyle())
+                            .listRowBackground(Color.theme.background)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                            
                         }
-                        
-                        
+                        .scrollContentBackground(.hidden)
                     }
-                    .scrollContentBackground(.hidden)
-
                     
-                    Spacer()
                     
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -215,6 +281,7 @@ struct MySolutionsView: View {
                     
                 }
                 .background(Color.theme.background)
+                
                 .tabItem({
                     Label {
                         Text("Meds")
@@ -230,13 +297,29 @@ struct MySolutionsView: View {
         }
         .padding(.horizontal, Constants.Layout.kPadding/2)
         .background(Color.theme.background)
-        
-        .fullScreenCover(isPresented: $showSolutionCalculator) {
-            if let safeSolution = viewModel.selectedSolution {
-                MySolutionCalculatorView(selectedSolution: safeSolution)
+        .fullScreenCover(item: $presentedSheet, onDismiss: {
+            withAnimation {
+                editSolutionsActive = false
             }
+            viewModel.getSolutionList()
+        }, content: { sheet in
+            switch sheet {
+            case .calculatorView:
+                if let safeSolution = viewModel.selectedSolution {
+                    MySolutionCalculatorView(selectedSolution: safeSolution)
+                }
+            case .editSolution:
+                if let safeSolution = viewModel.selectedSolution?.solutionEntity {
+                    EditSolutionView(solution: safeSolution)
+                }
+                
+            case .editMedication:
+                Color.blue
             
-        }
+            }
+        })
+        
+        
     }
     
     

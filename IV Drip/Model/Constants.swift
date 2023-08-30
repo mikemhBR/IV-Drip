@@ -7,8 +7,13 @@
 
 import Foundation
 
+protocol Dose {
+    associatedtype T: Dose
+}
 
-enum ConcentrationOptions: String, CaseIterable {
+enum ConcentrationOptions: String, CaseIterable, Dose {
+    typealias T = ConcentrationOptions
+    
     
     case mcgKgMin = "mcg/kg/min"
     case mcgKgHour = "mcg/kg/H"
@@ -20,9 +25,13 @@ enum ConcentrationOptions: String, CaseIterable {
     case mgMin = "mg/min"
     case mgHour = "mg/hour"
     
+    case unitsMin = "units/min"
+    
 }
 
-enum PushDoseOptions: String, CaseIterable {
+enum PushDoseOptions: String, CaseIterable, Dose {
+    typealias T = PushDoseOptions
+    
     case mg = "mg"
     case mcg = "mcg"
     case mgKg = "mg/kg"
@@ -34,6 +43,7 @@ enum WeightOptions: String, CaseIterable {
     case grams = "g"
     case miligrams = "mg"
     case micrograms = "mcg"
+    case units = "units"
 }
 
 enum InfusionRateOptions: String, CaseIterable {
@@ -44,6 +54,13 @@ enum InfusionRateOptions: String, CaseIterable {
 enum MedDoseOptions: String, CaseIterable {
     case mg, mcg, mgKg, mgMin, mcgMin, mgKgHour, mgKgMin, mcgKgMin, unitsMin
 }
+
+struct TestStruct<T: Dose> {
+    let dose: T
+    let name: String
+}
+
+
 
 struct Constants {
     

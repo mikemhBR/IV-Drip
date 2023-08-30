@@ -83,7 +83,7 @@ struct CalculatorView: View {
                             }
                         }
                         
-                        VolumeRowView(showPickerWheel: $showVolumeWheelPicker, userInput: $volumeInt, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
+                        VolumeRowView(showPickerWheel: $showVolumeWheelPicker, inputDouble: 0.0, outputValue: $volumeInt, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
                             withAnimation {
                                 currentlySelectedRow = .desiredRate
                                 showConcentrationWheelPicker = true
@@ -151,7 +151,7 @@ struct CalculatorView: View {
                         }
                     
                         
-                        VolumeRowView(showPickerWheel: $showVolumeWheelPicker, userInput: $volumeInt, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
+                        VolumeRowView(showPickerWheel: $showVolumeWheelPicker, inputDouble: 0.0, outputValue: $volumeInt, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
                             withAnimation {
                                 currentlySelectedRow = .desiredRate
                                 showInfusionRateWheelPicker = true
@@ -247,6 +247,8 @@ struct CalculatorView: View {
             weightFactor = 1
         case .micrograms:
             weightFactor = pow(10, 3)
+        case .units:
+            weightFactor = 1
         }
         
         var timeFactor = 1.0
@@ -277,6 +279,9 @@ struct CalculatorView: View {
         case .mgHour:
             timeFactor = 1
             concentrationFactor = 1000
+        case .unitsMin:
+            timeFactor = 60
+            concentrationFactor = 1
         }
         
         if drugInBag != 0 && volumeInt != 0 && desiredRateField != 0 {

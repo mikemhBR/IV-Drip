@@ -1,26 +1,25 @@
 //
-//  AddCustomSolutionView.swift
+//  EditSolutionView.swift
 //  IV Drip
 //
-//  Created by Michael Mattesco Horta on 13/08/23.
+//  Created by Michael Mattesco Horta on 29/08/23.
 //
 
 import SwiftUI
 
-
-
-struct AddCustomSolutionView: View {
-    
+struct EditSolutionView: View {
     @EnvironmentObject var navigationModel: NavigationModel
     @EnvironmentObject var dbBrain: DBBrain
+    @Environment(\.dismiss) var dismiss
     
+    let solution: CustomSolutionEntity
     
-    @State private var solutionNameField = ""
+    @State var solutionNameField = ""
     
     @State private var mainComponentName = ""
     
     @State private var showMainComponentWheelPicker = false
-    @State private var mainComponentWeight = 0.0
+    @State private var mainComponentWeight: Double
     @State private var showAmpouleNumberWheelPicker = false
     
     @State private var mainComponentAmpVolume = 0.0
@@ -47,8 +46,8 @@ struct AddCustomSolutionView: View {
     @State private var showDetailForm = false
     
     @State private var showMinimumDosePickerWheel = false
-    @State var selectedConcentrationOption = ConcentrationOptions.mcgKgMin
-    @State var selectedPushDoseFactor = PushDoseOptions.mgKg
+    @State private var selectedConcentrationOption = ConcentrationOptions.mcgKgMin
+    @State private var selectedOptionalWeightOption = WeightOptions.miligrams
     @State private var minimumDose = 0.0
     
     @State private var showMaximumDosePickerWheel = false
@@ -57,12 +56,45 @@ struct AddCustomSolutionView: View {
     @State private var observationsField = ""
     
     @FocusState private var focusState: RowType?
+        
+    init(solution: CustomSolutionEntity) {
+        self.solution = solution
+        
+        _solutionNameField = State(initialValue: solution.solution_name ?? "")
+        _mainComponentName = State(initialValue: solution.main_active ?? "")
+        _mainComponentWeight = State(initialValue: solution.drug_weight_amp)
+        _mainComponentAmpVolume = State(initialValue: solution.drug_volume_amp)
+        _selectedMedQuantity = State(initialValue: solution.amp_number)
+        _selectedMedQuantityString = State(initialValue: String(format: "%.1f", selectedMedQuantity))
+        
+        //TODO: selectedMed logic
+        if let safeSelectedMed = solution.solutionToMed {
+            _selectedMyMed = State(initialValue: safeSelectedMed)
+        }
+        
+        _dilutionVolume = State(initialValue: solution.dilution_volume)
+        
+        //TODO: verify isContinuousinfusion int
+        _isContinuousInfusion = State(initialValue: Int(solution.solution_type))
+        
+        if solution.solution_min != 9999 {
+            _showDetailForm = State(initialValue: true)
+            _minimumDose = State(initialValue: solution.solution_min)
+        }
+        
+        if solution.solution_max != 9999 {
+            _maximumDose = State(initialValue: solution.solution_max)
+        }
+        
+        _observationsField = State(initialValue: solution.solution_obs ?? "")
+                
+    }
     
     var body: some View {
         ScrollView {
-            SectionHeaderView(sectionTitle: "Custom Solution") {
+            SectionHeaderView(sectionTitle: "Edit Solution") {
                 withAnimation {
-                    navigationModel.navigateTo(to: .mySolutions)
+                    dismiss()
                 }
             }
             
@@ -89,7 +121,7 @@ struct AddCustomSolutionView: View {
                     focusState = nil
                 }
                 
-                
+                  
                 Group {
                     
                     mainComponentForm
@@ -121,7 +153,7 @@ struct AddCustomSolutionView: View {
                     Text("Save")
                         .frame(width: Constants.Layout.buttonWidth.large.rawValue)
                         .modifier(PrimaryButtonConfig())
-                    
+                        
                 }
                 
                 
@@ -139,13 +171,10 @@ struct AddCustomSolutionView: View {
             currentlySelectedRow = focusState
         })
         .background(Color("Background 200"))
-        .onChange(of: selectedPushDoseFactor) { newValue in
-            selectedPushDoseFactor = newValue
-        }
+        
         
     }
-    
-    
+
     var mainComponentForm: some View {
         VStack (alignment: .leading, spacing: 4) {
             HStack {
@@ -165,7 +194,7 @@ struct AddCustomSolutionView: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color("Accent Blue"))
                 }
-                
+
             }
             
             if let safeMyMed = selectedMyMed {
@@ -210,41 +239,43 @@ struct AddCustomSolutionView: View {
                                 selectedMedQuantity = Double(selectedMedQuantityString) ?? 0.0
                             }
                         })
-                        .foregroundColor(Color("Text"))
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 72, height: Constants.Layout.textFieldHeight)
-                        .background(Color.white)
-                        .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
-                        .disabled(showSelectedMedWeightPicker)
-                        .onTapGesture {
-                            withAnimation {
-                                showSelectedMedWeightPicker = false
+                            .foregroundColor(Color("Text"))
+                            .keyboardType(.decimalPad)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 72, height: Constants.Layout.textFieldHeight)
+                            .background(Color.white)
+                            .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                            .disabled(showSelectedMedWeightPicker)
+                            .onTapGesture {
+                                withAnimation {
+                                    showSelectedMedWeightPicker = false
+                                }
+                                
                             }
-                            
-                        }
-                        .onSubmit {
-                            selectedMedQuantity = Double(selectedMedQuantityString) ?? 0.0
-                        }
+                            .onSubmit {
+                                selectedMedQuantity = Double(selectedMedQuantityString) ?? 0.0
+                            }
                         
                         
                         CustomStepper(inputDouble: $selectedMedQuantity) {
                             withAnimation {
                                 selectedMyMed = nil
                             }
+                            
+                            
                         }
-                        
+
                     }
                     .padding(Constants.Layout.kPadding/2)
                     .background(Color("Row Background"))
                     .cornerRadius(8)
-                }
-                
+                    }
+                    
                 
                 if showSelectedMedWeightPicker {
                     DecimalWheelPicker(intCases: 2, decimalCases: 1, selection: $selectedMedQuantity, initialValue: selectedMedQuantity)
-                    
-                    
+                        
+                        
                     Button("OK") {
                         selectedMedQuantityString = String(format: "%.1f", selectedMedQuantity)
                         withAnimation {
@@ -273,12 +304,13 @@ struct AddCustomSolutionView: View {
                 
                 
                 DrugWeightRowView(itemTitle: "Weight/Ampoule", pickerIntCases: 4,
-                                  pickerDecimalCases: 1,
-                                  showPickerWheel: $showMainComponentWheelPicker,
-                                  userValue: $mainComponentWeight,
-                                  selectedWeightOption: $selectedWeightOption,
-                                  currentlySelectedRow: $currentlySelectedRow,
-                                  rowTag: .drugInBag
+                    pickerDecimalCases: 1,
+                    showPickerWheel: $showMainComponentWheelPicker,
+                    inputDouble: mainComponentWeight,
+                    userValue: $mainComponentWeight,
+                    selectedWeightOption: $selectedWeightOption,
+                    currentlySelectedRow: $currentlySelectedRow,
+                    rowTag: .drugInBag
                 ) {
                     withAnimation {
                         currentlySelectedRow = .ampouleVolume
@@ -287,7 +319,7 @@ struct AddCustomSolutionView: View {
                 }
                 .focused($focusState, equals: .drugInBag)
                 
-                VolumeRowView(rowTitle: "Volume/Ampoule", showPickerWheel: $showMainComponentAmpouleVolumePicker, inputDouble: 0.0, outputValue: $mainComponentAmpVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .ampouleVolume) {
+                VolumeRowView(rowTitle: "Volume/Ampoule", showPickerWheel: $showMainComponentAmpouleVolumePicker, inputDouble: mainComponentAmpVolume,outputValue: $mainComponentAmpVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .ampouleVolume) {
                     withAnimation {
                         currentlySelectedRow = .ampouleNumber
                         showAmpouleNumberWheelPicker = true
@@ -306,7 +338,7 @@ struct AddCustomSolutionView: View {
             
         }
     }
-    
+
     var dilutionComponentForm: some View {
         VStack (alignment: .leading, spacing: 4) {
             Text("Dilution")
@@ -314,7 +346,7 @@ struct AddCustomSolutionView: View {
             
             VolumeRowView(
                 showPickerWheel: $showDilutionWheelPicker,
-                inputDouble: 0.0,
+                inputDouble: dilutionVolume,
                 outputValue: $dilutionVolume,
                 currentlySelectedRow: $currentlySelectedRow,
                 rowTag: .volume
@@ -323,29 +355,29 @@ struct AddCustomSolutionView: View {
                     currentlySelectedRow = nil
                     focusState = nil
                 }
-            }
-            .focused($focusState, equals: .volume)
-            
-            
-            
-            Button {
-                withAnimation {
-                    showDilutionOptions.toggle()
                 }
+                .focused($focusState, equals: .volume)
+            
+
                 
-            } label: {
-                HStack (spacing: 8) {
-                    Image(systemName: "chevron.right.circle.fill")
-                        .rotationEffect(Angle(degrees: showDilutionOptions ? 90 : 0))
+                Button {
+                    withAnimation {
+                        showDilutionOptions.toggle()
+                    }
                     
-                    
-                    Text("Select Dilution Fluid (optional)")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(Color("Accent Blue"))
+                } label: {
+                    HStack (spacing: 8) {
+                        Image(systemName: "chevron.right.circle.fill")
+                            .rotationEffect(Angle(degrees: showDilutionOptions ? 90 : 0))
+                        
+                        
+                        Text("Select Dilution Fluid (optional)")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(Color("Accent Blue"))
+                    }
+                   
                 }
-                
-            }
-            .padding(.leading, Constants.Layout.kPadding/2)
+                .padding(.leading, Constants.Layout.kPadding/2)
             
             
             
@@ -383,8 +415,6 @@ struct AddCustomSolutionView: View {
     
     var detailsForm: some View {
         VStack (alignment: .leading, spacing: 4) {
-            Text("Details")
-                .sectionHeaderStyle()
             
             Button {
                 withAnimation {
@@ -393,12 +423,12 @@ struct AddCustomSolutionView: View {
             } label: {
                 Label {
                     Text("Add Details (optional)")
-                    
-                    
+                        
+                        
                 } icon: {
                     Image(systemName: "plus")
                         .rotationEffect(Angle(degrees: showDetailForm ? 45 : 0))
-                    
+                        
                 }
                 
                 .foregroundColor(isContinuousInfusion == nil ? Color.secondary : Color("Accent Blue"))
@@ -409,48 +439,43 @@ struct AddCustomSolutionView: View {
             
             if showDetailForm && isContinuousInfusion != nil {
                 
+                Text("Details")
+                    .headlineTitle()
+                
+                
                 if isContinuousInfusion != nil && isContinuousInfusion == 1 {
-                    
-                    InfusionMinMaxRowView(outputMin: $minimumDose, outputMax: $maximumDose, selectedInfusionDoseOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow) {
-                        currentlySelectedRow = nil
+                    ConcentrationRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, inputDouble: minimumDose, userValue: $minimumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
+                        withAnimation {
+                            currentlySelectedRow = .maximumDose
+                            showMaximumDosePickerWheel = true
+                        }
                     }
                     .focused($focusState, equals: .minimumDose)
-                    //                    ConcentrationRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, userValue: $minimumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = .maximumDose
-                    //                            showMaximumDosePickerWheel = true
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .minimumDose)
-                    //
-                    //
-                    //                    ConcentrationRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, userValue: $maximumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = nil
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .maximumDose)
+                    
+                    
+                    ConcentrationRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, inputDouble: maximumDose, userValue: $maximumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
+                        withAnimation {
+                            currentlySelectedRow = nil
+                        }
+                    }
+                    .focused($focusState, equals: .maximumDose)
                     
                 } else if isContinuousInfusion != nil && isContinuousInfusion == 0 {
-                    //                    PushDoseRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, userValue: $minimumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = .maximumDose
-                    //                            showMaximumDosePickerWheel = true
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .minimumDose)
-                    
-                    PushMinMaxRowView(outputMin: $minimumDose, outputMax: $maximumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow) {
-                        currentlySelectedRow = nil
+                    DrugWeightRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, userValue: $minimumDose, selectedWeightOption: $selectedOptionalWeightOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
+                        withAnimation {
+                            currentlySelectedRow = .maximumDose
+                            showMaximumDosePickerWheel = true
+                        }
                     }
                     .focused($focusState, equals: .minimumDose)
                     
-                    //                    PushDoseRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, userValue: $maximumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = nil
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .maximumDose)
+                    
+                    DrugWeightRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, userValue: $maximumDose, selectedWeightOption: $selectedOptionalWeightOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
+                        withAnimation {
+                            currentlySelectedRow = nil
+                        }
+                    }
+                    .focused($focusState, equals: .maximumDose)
                 }
                 
                 Text("Observations")
@@ -608,15 +633,12 @@ struct AddCustomSolutionView: View {
                     Spacer()
                         .frame(height: 8)
                     
-                    HStack (spacing: Constants.Layout.kPadding/4) {
-                        Text("Concentration")
-                            .font(.system(size: 16, weight: .bold))
-                        
-                        Text(concentration + " \(selectedWeightOption.rawValue) / ml")
-                            .font(.system(size: 16, weight: .regular))
-                            
-                    }
-                    .fixedSize()
+                    Text("Concentration")
+                        .font(.system(size: 16, weight: .bold))
+                    
+                    Text(concentration + "\(selectedWeightOption.rawValue) / ml")
+                        .font(.system(size: 14, weight: .semibold))
+                        .fixedSize()
                     
                     if minimumDose != 0 || maximumDose != 0 {
                         Spacer()
@@ -624,96 +646,19 @@ struct AddCustomSolutionView: View {
                         
                         Text("Dose Range")
                             .font(.system(size: 16, weight: .bold))
-                            .frame(maxWidth: .infinity, alignment: .center)
                         
-                        if isContinuousInfusion == 1 {
-                            HStack {
-                                VStack (spacing: 2) {
-                                    Text("Mininum")
-                                        .caption3Title()
-                                        .padding(2)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.white)
-                                        .cornerRadius(2)
-                                    
-                                    Text(String(format: "%.2f", minimumDose) + " " + selectedConcentrationOption.rawValue)
-                                        .font(.system(size: 14, weight: .semibold))
-                                }
+                        HStack {
+                            Text(String(format: "%.2f", minimumDose) + " " + selectedConcentrationOption.rawValue)
+                                .font(.system(size: 14, weight: .semibold))
                                 .fixedSize()
-                                
-                                
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Color.theme.secondaryText)
-                                
-                                Rectangle()
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 1)
-                                    .foregroundColor(Color.theme.secondaryText)
-                                
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Color.theme.secondaryText)
-                                
-                                VStack (spacing: 2) {
-                                    Text("Maximum")
-                                        .caption3Title()
-                                        .padding(2)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.white)
-                                        .cornerRadius(2)
-                                    
-                                    Text(String(format: "%.2f", maximumDose) + " " + selectedConcentrationOption.rawValue)
-                                        .font(.system(size: 14, weight: .semibold))
-                                    
-                                }
+                            
+                            Image(systemName: "arrow.left.and.right")
+                                .frame(maxWidth: .infinity)
+                            
+                            Text(String(format: "%.2f", maximumDose) + " " + selectedConcentrationOption.rawValue)
+                                .font(.system(size: 14, weight: .semibold))
                                 .fixedSize()
-                                
-                            }
-                        } else if isContinuousInfusion == 0 {
-                            HStack {
-                                VStack (spacing: 2) {
-                                    Text("Mininum")
-                                        .caption3Title()
-                                        .padding(2)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.white)
-                                        .cornerRadius(2)
-                                    
-                                    Text(String(format: "%.2f", minimumDose) + " " + selectedPushDoseFactor.rawValue)
-                                        .font(.system(size: 14, weight: .semibold))
-                                }
-                                .fixedSize()
-                                
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Color.theme.secondaryText)
-                                
-                                Rectangle()
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: 1)
-                                
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Color.theme.secondaryText)
-                                
-                                VStack (spacing: 2) {
-                                    Text("Maximum")
-                                        .caption3Title()
-                                        .padding(2)
-                                        .frame(maxWidth: .infinity)
-                                        .background(Color.white)
-                                        .cornerRadius(2)
-                                    
-                                    Text(String(format: "%.2f", maximumDose) + " " + selectedPushDoseFactor.rawValue)
-                                        .font(.system(size: 14, weight: .semibold))
-                                    
-                                }
-                                .fixedSize()
-                                
-                            }
                         }
-                        
                     }
                 }
                 .padding(Constants.Layout.kPadding)
@@ -723,12 +668,10 @@ struct AddCustomSolutionView: View {
                 
                 
             }
-            
+           
         }
         
     }
-    
-    
     
     func saveSolution() {
         // Check if user selected a solution type
@@ -736,78 +679,36 @@ struct AddCustomSolutionView: View {
             return
         }
         
-        var minMaxFactor = 9999
-        var adjustedMinimumValue = 9999.0
-        var adjustedMaximumValue = 9999.0
-        //get min_max dose factor and adjusted rate
-        if solutionType == 1 {
-            switch selectedConcentrationOption {
-            case .mcgKgMin:
-                minMaxFactor = 3
-            case .mcgKgHour:
-                minMaxFactor = 3
-            case .mcgMin:
-                minMaxFactor = 2
-            case .mcgHour:
-                minMaxFactor = 2
-            case .mgKgMin:
-                minMaxFactor = 3
-            case .mgKgHour:
-                minMaxFactor = 3
-            case .mgMin:
-                minMaxFactor = 2
-            case .mgHour:
-                minMaxFactor = 2
-            case .unitsMin:
-                minMaxFactor = 4
-            }
-            
-            adjustedMinimumValue = InfusionCalculator.normalizeInfusionDose(inputFactor: selectedConcentrationOption, value: minimumDose)
-            adjustedMaximumValue = InfusionCalculator.normalizeInfusionDose(inputFactor: selectedConcentrationOption, value: maximumDose)
-            
-        } else if solutionType == 0 {
-            switch selectedPushDoseFactor {
-            case .mg:
-                minMaxFactor = 0
-            case .mcg:
-                minMaxFactor = 0
-            case .mgKg:
-                minMaxFactor = 1
-            case .mcgKg:
-                minMaxFactor = 1
-            case .unitsKg:
-                minMaxFactor = 5
-            }
-            
-            adjustedMinimumValue = InfusionCalculator.normalizePushDose(inputFactor: selectedPushDoseFactor, value: minimumDose)
-            adjustedMaximumValue = InfusionCalculator.normalizePushDose(inputFactor: selectedPushDoseFactor, value: maximumDose)
-            
-        }
         
         if let userSelectedMed = selectedMyMed {
-            do {
-                try dbBrain.saveCustomSolution(
-                    solutionName: solutionNameField,
-                    savedMed: userSelectedMed,
-                    mainActiveComponent: userSelectedMed.med_name ?? "error",
-                    drugWeightPerAmp: userSelectedMed.med_weight,
-                    drugWeightUnit: selectedWeightOption == .units ? 1 : 0,
-                    drugVolumePerAmp: userSelectedMed.med_volume,
-                    numberAmps: selectedMedQuantity,
-                    dilutionVolume: dilutionVolume,
-                    solutionType: solutionType,
-                    minimumDose: minimumDose == 0.0 ? nil : adjustedMinimumValue,
-                    maximumDose: maximumDose == 0.0 ? nil : adjustedMaximumValue,
-                    minMaxFactor: minMaxFactor,
-                    solutionObservation: observationsField
-                )
-                
-                withAnimation {
-                    navigationModel.navigateTo(to: .mySolutions)
-                }
-            } catch {
-                return
+            solution.solution_name = solutionNameField
+            solution.main_active = userSelectedMed.med_name ?? "error"
+            solution.med_uuid = userSelectedMed.med_uuid ?? "Error"
+            solution.solutionToMed = userSelectedMed
+            solution.drug_weight_amp = userSelectedMed.med_weight
+            solution.drug_volume_amp = userSelectedMed.med_volume
+            solution.amp_number = selectedMedQuantity
+            solution.dilution_volume = dilutionVolume
+            solution.solution_type = Int16(solutionType)
+            
+            if minimumDose == 0.0 {
+                solution.solution_min = 9999
+            } else {
+                solution.solution_min = minimumDose
             }
+            
+            if maximumDose == 0.0 {
+                solution.solution_max = 9999
+            } else {
+                solution.solution_max = maximumDose
+            }
+           
+            solution.solution_obs = observationsField
+            
+            dbBrain.saveDataToContext()
+            
+            dismiss()
+            
         } else {
             
             var adjustedWeight = 0.0
@@ -823,39 +724,42 @@ struct AddCustomSolutionView: View {
                 adjustedWeight = mainComponentWeight
             }
             
-            do {
-                try dbBrain.saveCustomSolution(
-                    solutionName: solutionNameField,
-                    savedMed: nil,
-                    mainActiveComponent: mainComponentName,
-                    drugWeightPerAmp: adjustedWeight,
-                    drugWeightUnit: selectedWeightOption == .units ? 1 : 0,
-                    drugVolumePerAmp: mainComponentAmpVolume,
-                    numberAmps: selectedMedQuantity,
-                    dilutionVolume: dilutionVolume,
-                    solutionType: solutionType,
-                    minimumDose: minimumDose == 0.0 ? nil : adjustedMinimumValue,
-                    maximumDose: maximumDose == 0.0 ? nil : adjustedMaximumValue,
-                    minMaxFactor: minMaxFactor,
-                    solutionObservation: observationsField
-                )
-                
-                withAnimation {
-                    navigationModel.navigateTo(to: .mySolutions)
-                }
-            } catch {
-                return
+            solution.solution_name = solutionNameField
+            solution.med_uuid = nil
+            solution.solutionToMed = nil
+            solution.main_active = mainComponentName
+            solution.drug_weight_amp = adjustedWeight
+            solution.drug_volume_amp = mainComponentAmpVolume
+            solution.amp_number = selectedMedQuantity
+            solution.dilution_volume = dilutionVolume
+            solution.solution_type = Int16(solutionType)
+            
+            if minimumDose == 0.0 {
+                solution.solution_min = 9999
+            } else {
+                solution.solution_min = minimumDose
             }
+            
+            if maximumDose == 0.0 {
+                solution.solution_max = 9999
+            } else {
+                solution.solution_max = maximumDose
+            }
+           
+            solution.solution_obs = observationsField
+            
+            dbBrain.saveDataToContext()
+            
+            dismiss()
+            
         }
         
         
     }
-    
 }
 
-struct AddCustomSolutionView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddCustomSolutionView()
-            .environmentObject(NavigationModel.shared)
-    }
-}
+//struct EditSolutionView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EditSolutionView()
+//    }
+//}

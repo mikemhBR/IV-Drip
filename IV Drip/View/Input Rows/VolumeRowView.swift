@@ -11,10 +11,10 @@ struct VolumeRowView: View {
     var rowTitle = "Volume"
     
     @Binding var showPickerWheel: Bool
-    @State var inputTextField = "0"
-    @State var inputDouble: Double = 0.0
+    @State var inputTextField = "0.0"
+    @State var inputDouble: Double
         
-    @Binding var userInput: Double
+    @Binding var outputValue: Double
     
     @Binding var currentlySelectedRow: RowType?
     
@@ -91,7 +91,10 @@ struct VolumeRowView: View {
         .cornerRadius(8)
         .onChange(of: inputDouble) { newValue in
             inputTextField = String(newValue)
-            userInput = newValue
+            outputValue = newValue
+        }
+        .onAppear {
+            inputTextField = String(inputDouble)
         }
         
     }
@@ -99,7 +102,7 @@ struct VolumeRowView: View {
 
 struct VolumeRowView_Previews: PreviewProvider {
     static var previews: some View {
-        VolumeRowView(showPickerWheel: .constant(false), userInput: .constant(80), currentlySelectedRow: .constant(.volume), rowTag: .volume) {
+        VolumeRowView(showPickerWheel: .constant(false), inputDouble: 0.0, outputValue: .constant(80), currentlySelectedRow: .constant(.volume), rowTag: .volume) {
             
         }
     }

@@ -39,8 +39,12 @@
 		27A3F5BE2A94BDA10007BC7C /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */; };
 		27A3F5C02A9564D90007BC7C /* AmpouleNumberRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */; };
 		27A3F5C32A960E730007BC7C /* InfusionCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */; };
+		27A99BDA2A9F24EC00A5B6B4 /* PushMinMaxRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A99BD92A9F24EC00A5B6B4 /* PushMinMaxRowView.swift */; };
+		27A99BDC2A9F2F1B00A5B6B4 /* InfusionMinMaxRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A99BDB2A9F2F1B00A5B6B4 /* InfusionMinMaxRowView.swift */; };
 		27ABDBA72A9D250B00D4A898 /* CreateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABDBA62A9D250B00D4A898 /* CreateListView.swift */; };
 		27ABDBA92A9D270800D4A898 /* CreateListTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */; };
+		27ACAF582A9DCF8600652BC5 /* ListDetailComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ACAF572A9DCF8600652BC5 /* ListDetailComponent.swift */; };
+		27ACAF5A2A9DF18500652BC5 /* EditSolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ACAF592A9DF18500652BC5 /* EditSolutionView.swift */; };
 		27B0DD732A8974D300C69474 /* AddCustomSolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */; };
 		27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B0DD742A89763600C69474 /* LayoutExtensions.swift */; };
 		27B46D4F2A988FA5008101C5 /* SolutionListTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */; };
@@ -104,8 +108,12 @@
 		27A3F5BD2A94BDA10007BC7C /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		27A3F5BF2A9564D80007BC7C /* AmpouleNumberRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmpouleNumberRowView.swift; sourceTree = "<group>"; };
 		27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfusionCalculator.swift; sourceTree = "<group>"; };
+		27A99BD92A9F24EC00A5B6B4 /* PushMinMaxRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMinMaxRowView.swift; sourceTree = "<group>"; };
+		27A99BDB2A9F2F1B00A5B6B4 /* InfusionMinMaxRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfusionMinMaxRowView.swift; sourceTree = "<group>"; };
 		27ABDBA62A9D250B00D4A898 /* CreateListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListView.swift; sourceTree = "<group>"; };
 		27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateListTileView.swift; sourceTree = "<group>"; };
+		27ACAF572A9DCF8600652BC5 /* ListDetailComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailComponent.swift; sourceTree = "<group>"; };
+		27ACAF592A9DF18500652BC5 /* EditSolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditSolutionView.swift; sourceTree = "<group>"; };
 		27B0DD722A8974D300C69474 /* AddCustomSolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomSolutionView.swift; sourceTree = "<group>"; };
 		27B0DD742A89763600C69474 /* LayoutExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutExtensions.swift; sourceTree = "<group>"; };
 		27B46D4E2A988FA5008101C5 /* SolutionListTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionListTileView.swift; sourceTree = "<group>"; };
@@ -148,6 +156,7 @@
 				27ABDBA62A9D250B00D4A898 /* CreateListView.swift */,
 				27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */,
 				27483F8D2A9D379C005EBD2A /* ListDetailView.swift */,
+				27ACAF572A9DCF8600652BC5 /* ListDetailComponent.swift */,
 			);
 			path = "My Lists";
 			sourceTree = "<group>";
@@ -272,6 +281,8 @@
 				2794FEE42A88E83B00579592 /* ConcentrationRowView.swift */,
 				2794FEE62A88E9A100579592 /* VolumeRowView.swift */,
 				27B46D522A98BAF2008101C5 /* PushDoseRowView.swift */,
+				27A99BD92A9F24EC00A5B6B4 /* PushMinMaxRowView.swift */,
+				27A99BDB2A9F2F1B00A5B6B4 /* InfusionMinMaxRowView.swift */,
 			);
 			path = "Input Rows";
 			sourceTree = "<group>";
@@ -284,6 +295,7 @@
 				27FF2FE52A9B53B300240AF1 /* My Meds */,
 				27A3F5BA2A94BD350007BC7C /* Custom Solution */,
 				27B46D502A989CD1008101C5 /* MySolutionCalculatorView.swift */,
+				27ACAF592A9DF18500652BC5 /* EditSolutionView.swift */,
 			);
 			path = "My Solutions";
 			sourceTree = "<group>";
@@ -441,6 +453,7 @@
 				2794FEA52A88BD8700579592 /* Persistence.swift in Sources */,
 				2794FEE72A88E9A100579592 /* VolumeRowView.swift in Sources */,
 				2794FEE92A8924A400579592 /* MySolutionsView.swift in Sources */,
+				27A99BDA2A9F24EC00A5B6B4 /* PushMinMaxRowView.swift in Sources */,
 				27483F8E2A9D379C005EBD2A /* ListDetailView.swift in Sources */,
 				2794FEA82A88BD8700579592 /* IV_Drip.xcdatamodeld in Sources */,
 				27ABDBA92A9D270800D4A898 /* CreateListTileView.swift in Sources */,
@@ -450,7 +463,9 @@
 				2794FEE12A88E45100579592 /* DrugWeightRowView.swift in Sources */,
 				27FF2FE42A9B4D5600240AF1 /* CustomStepper.swift in Sources */,
 				2794FED12A88BF1600579592 /* DecimalInputRowView.swift in Sources */,
+				27ACAF582A9DCF8600652BC5 /* ListDetailComponent.swift in Sources */,
 				27661B6A2A8B8381005D07C9 /* AddMedView.swift in Sources */,
+				27A99BDC2A9F2F1B00A5B6B4 /* InfusionMinMaxRowView.swift in Sources */,
 				27A3F5BC2A94BD620007BC7C /* CustomSolutionMyMedsView.swift in Sources */,
 				27A3F5BE2A94BDA10007BC7C /* SectionHeaderView.swift in Sources */,
 				2794FED92A88D23700579592 /* HomeView.swift in Sources */,
@@ -471,6 +486,7 @@
 				2794FEE32A88E6A900579592 /* InfusionRowView.swift in Sources */,
 				27B46D512A989CD1008101C5 /* MySolutionCalculatorView.swift in Sources */,
 				2794FEE52A88E83B00579592 /* ConcentrationRowView.swift in Sources */,
+				27ACAF5A2A9DF18500652BC5 /* EditSolutionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,7 +34,7 @@ struct PushDoseRowView: View {
         self.pickerDecimalCases = pickerDecimalCases
         self._showPickerWheel = showPickerWheel
         self.inputTextField = inputTextField
-        self.inputDouble = inputDouble
+        _inputDouble = State(initialValue: inputDouble)
         self._userValue = userValue
         self._selectedPushDoseOption = selectedPushDoseOption
         self._currentlySelectedRow = currentlySelectedRow

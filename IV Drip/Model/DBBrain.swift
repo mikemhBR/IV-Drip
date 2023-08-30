@@ -9,7 +9,7 @@ import CoreData
 import SwiftUI
 
 enum DatabaseError: Error {
-    case fetchError, saveCustomSolutionError, saveNewListError
+    case fetchError, saveCustomSolutionError, saveNewListError, deleteError
 }
 
 
@@ -21,11 +21,12 @@ class DBBrain: ObservableObject {
     
     let context = PersistenceController.shared.container.viewContext
     
-    func saveNewMedication(medName: String, medWeight: Double, medVolume: Double, medObs: String, minimum: Double?, maximum: Double?, doseReference: Int = 9) {
+    func saveNewMedication(medName: String, medWeight: Double, medWeightUnit: Int, medVolume: Double, medObs: String, minimum: Double?, maximum: Double?, doseReference: Int = 9) {
         let newMed = MedicationEntity(context: context)
         newMed.med_uuid = UUID().uuidString
         newMed.med_name = medName
         newMed.med_weight = medWeight
+        newMed.med_weight_unit = Int16(medWeightUnit)
         newMed.med_volume = medVolume
         
         if minimum != nil {
@@ -77,13 +78,23 @@ class DBBrain: ObservableObject {
         saveDataToContext()
     }
     
-    func saveCustomSolution(solutionName: String, mainActiveComponent: String, drugWeightPerAmp: Double, drugVolumePerAmp: Double, numberAmps: Double, dilutionVolume: Double, solutionType: Int, minimumDose: Double?, maximumDose: Double?, solutionObservation: String) throws {
+    func saveCustomSolution(solutionName: String, savedMed: MedicationEntity?, mainActiveComponent: String, drugWeightPerAmp: Double, drugWeightUnit: Int, drugVolumePerAmp: Double, numberAmps: Double, dilutionVolume: Double, solutionType: Int, minimumDose: Double?, maximumDose: Double?, minMaxFactor: Int, solutionObservation: String) throws {
         
         let newSolution = CustomSolutionEntity(context: context)
         newSolution.solution_uuid = UUID().uuidString
         newSolution.solution_name = solutionName
+        
+        if let safeSavedMed = savedMed {
+            newSolution.med_uuid = safeSavedMed.med_uuid
+            newSolution.solutionToMed = safeSavedMed
+        } else {
+            newSolution.med_uuid = nil
+            newSolution.solutionToMed = nil
+        }
+        
         newSolution.main_active = mainActiveComponent
         newSolution.drug_weight_amp = drugWeightPerAmp
+        newSolution.drug_weight_unit = Int16(drugWeightUnit)
         newSolution.drug_volume_amp = drugVolumePerAmp
         newSolution.amp_number = numberAmps
         newSolution.dilution_volume = dilutionVolume
@@ -91,10 +102,12 @@ class DBBrain: ObservableObject {
         
         if let safeMin = minimumDose {
             newSolution.solution_min = safeMin
+            newSolution.min_max_factor = Int16(minMaxFactor)
         }
         
         if let safeMax = maximumDose {
             newSolution.solution_max = safeMax
+            newSolution.min_max_factor = Int16(minMaxFactor)
         }
         
         newSolution.solution_obs = solutionObservation
@@ -106,6 +119,12 @@ class DBBrain: ObservableObject {
         }
         
     }
+    
+    
+    
+    
+    
+    //MARK: My List Functions
     
     func createNewList(listName: String, listUUID: String) throws -> SolutionListEntity {
         let newList = SolutionListEntity(context: context)
@@ -147,11 +166,11 @@ class DBBrain: ObservableObject {
             throw DatabaseError.fetchError
         }
         
+        
         return allLists
     }
     
     func getSolutionsFromList(listUUID: String) throws -> [CustomSolutionEntity] {
-        print("1")
         var solutionFactList = [SolutionListFact]()
         
         let request: NSFetchRequest<SolutionListFact> = SolutionListFact.fetchRequest()
@@ -171,16 +190,50 @@ class DBBrain: ObservableObject {
             solutionRequest.predicate = NSPredicate(format: "solution_uuid = %@", solutionUUID.solution_uuid!)
             
             do {
-                let completeSolution = try context.fetch(solutionRequest)
-                solutionList.append(completeSolution.first!)
+                let singleSolution = try context.fetch(solutionRequest)
+                if let safeSolution = singleSolution.first {
+                    solutionList.append(safeSolution)
+                }
+                
             } catch {
                 continue
             }
         }
-        
-        print(solutionList.count)
-        
+                
         return solutionList
+    }
+    
+    func deleteList(listUUID: String) {
+        var foundLists = [SolutionListEntity]()
+        
+        let request: NSFetchRequest<SolutionListEntity> = SolutionListEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "list_uuid = %@", listUUID)
+        
+        do {
+            foundLists = try context.fetch(request)
+            
+            for list in foundLists {
+                context.delete(list)
+            }
+        } catch {
+            //TODO: Error handling
+        }
+        
+        var foundFact = [SolutionListFact]()
+        let factRequest: NSFetchRequest<SolutionListFact> = SolutionListFact.fetchRequest()
+        factRequest.predicate = NSPredicate(format: "list_uuid = %@", listUUID)
+        
+        do {
+            foundFact = try context.fetch(factRequest)
+            
+            for fact in foundFact {
+                context.delete(fact)
+            }
+        } catch {
+            //TODO: error handling
+        }
+        
+        saveDataToContext()
     }
     
     func saveDataToContext() {

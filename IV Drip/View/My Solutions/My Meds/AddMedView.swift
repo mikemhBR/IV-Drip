@@ -68,7 +68,7 @@ struct AddMedView: View {
                     
                     drugWeightView
                     
-                    VolumeRowView(rowTitle: "Volume/Ampoule", showPickerWheel: $showVolumePickerWheel, userInput: $medVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
+                    VolumeRowView(rowTitle: "Volume/Ampoule", showPickerWheel: $showVolumePickerWheel, inputDouble: 0.0, outputValue: $medVolume, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
                         withAnimation {
                             showVolumePickerWheel = false
                             currentlySelectedRow = nil
@@ -232,6 +232,7 @@ struct AddMedView: View {
             dbBrain.saveNewMedication(
                 medName: medName,
                 medWeight: adjustedWeight,
+                medWeightUnit: selectedWeightOption == .units ? 1 : 0,
                 medVolume: medVolume,
                 medObs: observationsField,
                 minimum: nil,
@@ -257,6 +258,7 @@ struct AddMedView: View {
             dbBrain.saveNewMedication(
                 medName: medName,
                 medWeight: adjustedWeight,
+                medWeightUnit: selectedWeightOption == .units ? 1 : 0,
                 medVolume: medVolume,
                 medObs: observationsField,
                 minimum: getDose(inputValue: minimumDose),
@@ -273,6 +275,7 @@ struct AddMedView: View {
          2: drug weight and time
          3: drug weight, patient weight and time
          4: units/minute
+         5: units/kg
          */
         
         switch selectedMedDoseOption {

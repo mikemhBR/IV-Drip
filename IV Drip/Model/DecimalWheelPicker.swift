@@ -55,7 +55,6 @@ struct DecimalWheelPicker: UIViewRepresentable {
         var decimalString = String(format: "%.\(decimalCases)f", initialValue.truncatingRemainder(dividingBy: 1))
         decimalString = String(decimalString.suffix(decimalString.count - 2))
         
-        print(decimalString)
         
         var i = 0
         

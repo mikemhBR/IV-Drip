@@ -18,10 +18,14 @@ class MyListsViewModel: ObservableObject {
     }
     
     func getAllLists() {
-        
         try? myLists = dbBrain.getAllLists()
-        
     }
+    
+    func deleteList(listUUID: String) {
+        dbBrain.deleteList(listUUID: listUUID)
+        getAllLists()
+    }
+    
 }
 struct MyListsView: View {
     @EnvironmentObject var navigationModel: NavigationModel
@@ -59,22 +63,43 @@ struct MyListsView: View {
                             
                             viewModel.selectedList = list
                             
+                            //TODO: remove
+                            var testList = list.listToFact as? Set<SolutionListFact>
+                            
+                            for object in testList! {
+                                let singleObject = object.factToSolution
+                                print(singleObject?.solution_name)
+                            }
+                            
                             withAnimation {
                                 showDetailView = true
                             }
                             
                         }
+                        .listRowBackground(Color.theme.rowBackground)
+                        .swipeActions {
+                            Button {
+                                if let safeUUID = list.list_uuid {
+                                    viewModel.deleteList(listUUID: safeUUID)
+                                }
+                                
+                            } label: {
+                                Image(systemName: "trash.circle.fill")
+                            }
+                        }
                 }
                 
             }
+            .scrollContentBackground(.hidden)
         }
         .fullScreenCover(isPresented: $showDetailView) {
             if let safeList = viewModel.selectedList {
-                
                 ListDetailView(selectedList: safeList)
             }
                 
         }
+        .padding(.horizontal, Constants.Layout.kPadding/2)
+        .background(Color.theme.background)
         
     }
 }

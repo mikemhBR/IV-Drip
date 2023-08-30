@@ -135,7 +135,6 @@ struct MySolutionCalculatorView: View {
                         }
                                         .onTapGesture {
                                             withAnimation {
-                                                print("single tap")
                                                 currentlySelectedRow = .desiredRate
                                             }
                                         }
@@ -172,7 +171,6 @@ struct MySolutionCalculatorView: View {
             getInfusionRate()
         }
         .onChange(of: patientWeight) { newValue in
-            print(patientWeight)
             getInfusionRate()
             getPushDose()
             getInverseInfusionRate()
@@ -199,14 +197,10 @@ struct MySolutionCalculatorView: View {
             getInverseInfusionRate()
         })
         .onAppear() {
-            print("onAppear storedPatientWeight: \(storedPatientWeight)")
             patientWeight = Double(storedPatientWeight)
-            print("onAppear before patientWeight: \(patientWeight)")
         }
         .onDisappear {
-            print("onDisappear before patientWeight: \(patientWeight)")
             storedPatientWeight = Int(patientWeight.rounded(.down))
-            print("onDisappear before storedPatientWeight: \(storedPatientWeight)")
         }
         
     }
@@ -286,7 +280,6 @@ struct MySolutionCalculatorView: View {
         
         DispatchQueue.main.async {
             inverseInfusionRateString = String(format: "%.2f", result) + " " + desiredInversionInfusionFactor.rawValue
-            print(inverseInfusionRateString)
         }
     }
     

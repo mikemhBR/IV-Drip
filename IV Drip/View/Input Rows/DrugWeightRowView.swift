@@ -15,9 +15,9 @@ struct DrugWeightRowView: View {
     
     @Binding var showPickerWheel: Bool
     @State var inputTextField = "0.0"
-    @State var inputDouble = 0.0
+    @State var inputDouble: Double
     
-    @Binding var userValue: Double
+    @Binding var outputValue: Double
     @Binding var selectedWeightOption: WeightOptions
     
     @State private var weightOptions: WeightOptions = .miligrams
@@ -28,14 +28,14 @@ struct DrugWeightRowView: View {
     
     let buttonTapped: ()->()
     
-    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputTextField: String = "0.0", inputDouble: Double = 0.0, userValue: Binding<Double>, selectedWeightOption: Binding<WeightOptions>, weightOptions: WeightOptions = .miligrams, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
+    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputDouble: Double = 0.0, userValue: Binding<Double>, selectedWeightOption: Binding<WeightOptions>, weightOptions: WeightOptions = .miligrams, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
         self.itemTitle = itemTitle
         self.pickerIntCases = pickerIntCases
         self.pickerDecimalCases = pickerDecimalCases
         self._showPickerWheel = showPickerWheel
-        self.inputTextField = inputTextField
-        self.inputDouble = inputDouble
-        self._userValue = userValue
+        self._inputTextField = State(initialValue: String(format: "%.1f", inputDouble))
+        self._inputDouble = State(initialValue: inputDouble)
+        self._outputValue = userValue
         self._selectedWeightOption = selectedWeightOption
         self.weightOptions = weightOptions
         self._currentlySelectedRow = currentlySelectedRow
@@ -116,12 +116,12 @@ struct DrugWeightRowView: View {
                 
             
         }
-        .padding(8)
+        .padding(Constants.Layout.kPadding/2)
         .background(Color("Row Background"))
-        .cornerRadius(8)
+        .cornerRadius(Constants.Layout.kPadding/2)
         .onChange(of: inputDouble) { newValue in
             inputTextField = String(format: "%.\(pickerDecimalCases)f", newValue)
-            userValue = newValue
+            outputValue = newValue
         }
         .onChange(of: weightOptions) { newValue in
             selectedWeightOption = newValue
