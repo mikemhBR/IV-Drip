@@ -78,7 +78,7 @@ class DBBrain: ObservableObject {
         saveDataToContext()
     }
     
-    func saveCustomSolution(solutionName: String, savedMed: MedicationEntity?, mainActiveComponent: String, drugWeightPerAmp: Double, drugWeightUnit: Int, drugVolumePerAmp: Double, numberAmps: Double, dilutionVolume: Double, solutionType: Int, minimumDose: Double?, maximumDose: Double?, minMaxFactor: Int, solutionObservation: String) throws {
+    func saveCustomSolution(solutionName: String, savedMed: MedicationEntity?, mainActiveComponent: String, drugWeightPerAmp: Double, drugWeightUnit: Int, drugVolumePerAmp: Double, numberAmps: Double, dilutionVolume: Double, solutionType: Int, minimumDose: Double?, maximumDose: Double?, minMaxFactor: Int, minMaxCatFactor: Int, solutionObservation: String) throws {
         
         let newSolution = CustomSolutionEntity(context: context)
         newSolution.solution_uuid = UUID().uuidString
@@ -141,6 +141,7 @@ class DBBrain: ObservableObject {
     }
     
     func saveSolutionToList(list: SolutionListEntity, solution: CustomSolutionEntity) throws {
+        
         let listItem = SolutionListFact(context: context)
         listItem.list_uuid = list.list_uuid
         listItem.solution_uuid = solution.solution_uuid
@@ -155,7 +156,32 @@ class DBBrain: ObservableObject {
         
     }
     
+    func removeSolutionFromList(list: SolutionListEntity, solution: CustomSolutionEntity) {
+        var factList = [SolutionListFact]()
+        
+        let request: NSFetchRequest<SolutionListFact> = SolutionListFact.fetchRequest()
+        
+        do {
+            factList = try context.fetch(request)
+        } catch {
+            print("error")
+        }
+        
+        for fact in factList {
+            if let safeListUUID = list.list_uuid, let safeSolutionUUID = solution.solution_uuid {
+                if fact.list_uuid == safeListUUID && fact.solution_uuid == safeSolutionUUID {
+                    context.delete(fact)
+                }
+            }
+            
+        }
+        
+        saveDataToContext()
+    }
+    
     func getAllLists() throws -> [SolutionListEntity] {
+        //TODO: configure deletion of empty lists
+        
         var allLists = [SolutionListEntity]()
         
         let request: NSFetchRequest<SolutionListEntity> = SolutionListEntity.fetchRequest()
@@ -166,6 +192,25 @@ class DBBrain: ObservableObject {
             throw DatabaseError.fetchError
         }
         
+        for list in allLists {
+            let factList = list.listToFact as? Set<SolutionListFact>
+            
+            if let safeFactList = factList {
+                if safeFactList.isEmpty {
+                    context.delete(list)
+                }
+                
+            } else {
+                context.delete(list)
+            }
+            saveDataToContext()
+        }
+        
+        do {
+            allLists = try context.fetch(request)
+        } catch {
+            throw DatabaseError.fetchError
+        }
         
         return allLists
     }

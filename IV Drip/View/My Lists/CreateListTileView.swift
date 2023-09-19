@@ -11,9 +11,7 @@ struct CreateListTileView: View {
     
     let solution: SolutionListClass
     
-    @State private var isSelected = false
-    
-    let wasSelected: (_: Bool) -> ()
+    @Binding var isSelected: Bool
     
     let mainComponentWeightString: String
     let numberAmpsString: String
@@ -22,9 +20,9 @@ struct CreateListTileView: View {
     let finalVolumeString: String
     let unitOfMeasure: String
     
-    init(solution: SolutionListClass, wasSelected: @escaping (_: Bool) -> Void) {
+    init(solution: SolutionListClass, isSelected: Binding<Bool>) {
         self.solution = solution
-        self.wasSelected = wasSelected
+        self._isSelected = isSelected
         self.mainComponentWeightString = String(format: "%.1f", solution.mainComponentWeightPerAmp)
         self.numberAmpsString = String(format: "%.1f", solution.numberAmps)
         self.dilutionVolumeString = String(format: "%.1f", solution.dilutionVolume)
@@ -62,7 +60,6 @@ struct CreateListTileView: View {
             withAnimation {
                 isSelected.toggle()
             }
-            wasSelected(isSelected)
         }
     }
     
@@ -130,7 +127,11 @@ struct CreateListTileView: View {
         } else {
             return .mgMin
         }
-            
+        
+    }
+    
+    func getMinimumDose() {
+        
     }
     
     @ViewBuilder
@@ -138,150 +139,128 @@ struct CreateListTileView: View {
         
         
         if let safeSolution = solution.solutionEntity {
-            let databaseRateFactor = Int(safeSolution.min_max_factor)
             let minDose = safeSolution.solution_min
             let maxDose = safeSolution.solution_max
             
             
+            
             if safeSolution.solution_type == 1 {
+                let testMinimum = DatabaseInfusionDoseStruct(initialValue: minDose, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 
-                let desiredOutputFactor = getInfusionDoseFactor(factor: databaseRateFactor)
+                let testMaximum = DatabaseInfusionDoseStruct(initialValue: maxDose, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 
-                    VStack (alignment: .leading, spacing: 0) {
-                        Text("Dose Range")
-                            .captionTitle()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        
-                        
-                        HStack {
-                            VStack (alignment: .leading, spacing: 2) {
-                                Text("Mininum")
-                                    .caption3Title()
-                                    .padding(2)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.white)
-                                    .cornerRadius(2)
-                                
-                                if let safeMin = InfusionCalculator.normalizeDatabaseInfusionDose(rateValue: minDose, databaseRateFactor: databaseRateFactor, desiredOutputFactor: desiredOutputFactor) {
-                                    Text("\(String(format: "%.2f", safeMin)) \(desiredOutputFactor.rawValue)")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.primaryText)
-                                } else {
-                                    Text("not assigned")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.secondaryText)
-                                }
-                                
-                            }
-                            .fixedSize(horizontal: true, vertical: false)
-                            
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(Color.theme.secondaryText)
-                            
-                            Rectangle()
+                VStack (alignment: .leading, spacing: 0) {
+                    Text("Dose Range")
+                        .captionTitle()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    
+                    HStack {
+                        VStack (alignment: .leading, spacing: 2) {
+                            Text("Mininum")
+                                .caption3Title()
+                                .padding(2)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 1)
-                                .foregroundColor(Color.theme.secondaryText)
+                                .background(Color.white)
+                                .cornerRadius(2)
                             
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(Color.theme.secondaryText)
+                            Text("\(String(format: "%.2f", testMinimum.drugDose)) \(testMinimum.unitOfMeasure.rawValue)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.theme.primaryText)
                             
-                            VStack (alignment: .leading, spacing: 2) {
-                                Text("Maximum")
-                                    .caption3Title()
-                                    .padding(2)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.white)
-                                    .cornerRadius(2)
-                                
-                                if let safeMax = InfusionCalculator.normalizeDatabaseInfusionDose(rateValue: maxDose, databaseRateFactor: databaseRateFactor, desiredOutputFactor: desiredOutputFactor) {
-                                    Text("\(String(format: "%.2f", safeMax)) \(desiredOutputFactor.rawValue)")
-                                        .font(.system(size: 12, weight: .semibold))
-                                } else {
-                                    Text("not assigned")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.secondaryText)
-                                }
-                            }
-                            .fixedSize()
                         }
+                        .fixedSize(horizontal: true, vertical: false)
                         
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Rectangle()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 1)
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        VStack (alignment: .leading, spacing: 2) {
+                            Text("Maximum")
+                                .caption3Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                            
+                            Text("\(String(format: "%.2f", testMaximum.drugDose)) \(testMaximum.unitOfMeasure.rawValue)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.theme.primaryText)
+                        }
+                        .fixedSize()
                     }
+                    
+                }
                 
                 
                 
                 
                 
             } else {
-                let desiredOutputFactor = getPushDoseFactor(factor: databaseRateFactor)
+                let testMinimum = DatabasePushDoseStruct(initialValue: minDose, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 
+                let testMaximum = DatabasePushDoseStruct(initialValue: maxDose, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 
-                    VStack (alignment: .leading, spacing: 0) {
-                        Text("Dose Range")
-                            .captionTitle()
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        
-                        
-                        HStack {
-                            VStack (alignment: .leading, spacing: 2) {
-                                Text("Mininum")
-                                    .caption3Title()
-                                    .padding(2)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.white)
-                                    .cornerRadius(2)
-                                
-                                if let safeMin = InfusionCalculator.normalizeDatabasePushDose(rateValue: minDose, databaseRateFactor: databaseRateFactor, desiredOutputFactor: desiredOutputFactor) {
-                                    Text("\(String(format: "%.2f", safeMin)) mcg/kg/min")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.primaryText)
-                                } else {
-                                    Text("not assigned")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.secondaryText)
-                                }
-                                
-                            }
-                            .fixedSize(horizontal: true, vertical: false)
-                            
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(Color.theme.secondaryText)
-                            
-                            Rectangle()
+                VStack (alignment: .leading, spacing: 0) {
+                    Text("Dose Range")
+                        .captionTitle()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    
+                    
+                    HStack {
+                        VStack (alignment: .leading, spacing: 2) {
+                            Text("Mininum")
+                                .caption3Title()
+                                .padding(2)
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 1)
-                                .foregroundColor(Color.theme.secondaryText)
+                                .background(Color.white)
+                                .cornerRadius(2)
                             
-                            Image(systemName: "circle.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(Color.theme.secondaryText)
+                            Text("\(testMinimum.doseString) \(testMinimum.unitOfMeasure.rawValue)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.theme.primaryText)
                             
-                            VStack (alignment: .leading, spacing: 2) {
-                                Text("Maximum")
-                                    .caption3Title()
-                                    .padding(2)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color.white)
-                                    .cornerRadius(2)
-                                
-                                if let safeMax = InfusionCalculator.normalizeDatabasePushDose(rateValue: maxDose, databaseRateFactor: databaseRateFactor, desiredOutputFactor: desiredOutputFactor) {
-                                    Text("\(String(format: "%.2f", safeMax)) mcg/kg/min")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.primaryText)
-                                    
-                                } else {
-                                    Text("not assigned")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(Color.theme.secondaryText)
-                                }
-                            }
-                            .fixedSize()
                         }
+                        .fixedSize(horizontal: true, vertical: false)
                         
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Rectangle()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 1)
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        VStack (alignment: .leading, spacing: 2) {
+                            Text("Maximum")
+                                .caption3Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                            
+                            Text("\(testMaximum.doseString) \(testMaximum.unitOfMeasure.rawValue)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.theme.primaryText)
+                        }
+                        .fixedSize()
                     }
+                    
+                }
                 
             }
             
@@ -293,10 +272,8 @@ struct CreateListTileView: View {
 
 struct CreateListTileView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateListTileView(solution: SolutionListClass.testData) { isSelected in
-            
-        }
-        .environmentObject(NavigationModel.shared)
-        .environmentObject(DBBrain.shared)
+        CreateListTileView(solution: SolutionListClass.testData, isSelected: .constant(false))
+            .environmentObject(NavigationModel.shared)
+            .environmentObject(DBBrain.shared)
     }
 }

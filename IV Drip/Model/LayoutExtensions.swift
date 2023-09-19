@@ -124,9 +124,11 @@ struct InputRowTextFieldModifier: ViewModifier {
             .textFieldFont()
             .keyboardType(.decimalPad)
             .multilineTextAlignment(.center)
-            .frame(width: 88, height: Constants.Layout.textFieldHeight)
+            .textSelection(.disabled)
+            .frame(width: 88, height: Constants.Layout.textFieldHeight, alignment: .center)
             .background(Color.white)
             .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+            
     }
 }
 

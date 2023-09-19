@@ -8,6 +8,8 @@
 import SwiftUI
 
 class MyListsViewModel: ObservableObject {
+    
+    
     var dbBrain = DBBrain.shared
     
     @Published var myLists = [SolutionListEntity]()
@@ -28,12 +30,22 @@ class MyListsViewModel: ObservableObject {
     
 }
 struct MyListsView: View {
+    
+    private enum ActiveSheet: Identifiable {
+        case editList, showListDetails
+        
+        var id: ActiveSheet {
+            self
+        }
+    }
+    
     @EnvironmentObject var navigationModel: NavigationModel
     
     @StateObject private var viewModel = MyListsViewModel()
     
-    @State private var showDetailView = false
     @State private var selectedList: SolutionListEntity?
+    
+    @State private var presentedSheet: ActiveSheet?
     
     var body: some View {
         VStack {
@@ -42,6 +54,9 @@ struct MyListsView: View {
                     navigationModel.navigateTo(to: .homeView)
                 }
             }
+            
+            Spacer()
+                .frame(height: Constants.Layout.kPadding)
             
             Button {
                 withAnimation {
@@ -56,48 +71,68 @@ struct MyListsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             
+            
             List {
                 ForEach(viewModel.myLists, id: \.self) { list in
-                    Text(list.list_name ?? "")
-                        .onTapGesture {
+                    HStack (spacing: Constants.Layout.kPadding/2) {
+                        
+                        
+                        Text(list.list_name ?? "")
                             
+                    }
+                    .onTapGesture {
+                        
+                        viewModel.selectedList = list
+                        
+                        presentedSheet = .showListDetails
+                        
+                       
+                        
+                        
+                    }
+                    .listRowBackground(Color.theme.rowBackground)
+                    .swipeActions (edge: .trailing, allowsFullSwipe: true) {
+                        Button {
+                            if let safeUUID = list.list_uuid {
+                                viewModel.deleteList(listUUID: safeUUID)
+                            }
+                            
+                        } label: {
+                            Image(systemName: "trash.circle.fill")
+                                
+                        }
+                        .tint(Color("Accent Red"))
+                    }
+                    .swipeActions (edge: .leading, allowsFullSwipe: false){
+                        Button {
                             viewModel.selectedList = list
                             
-                            //TODO: remove
-                            var testList = list.listToFact as? Set<SolutionListFact>
-                            
-                            for object in testList! {
-                                let singleObject = object.factToSolution
-                                print(singleObject?.solution_name)
-                            }
-                            
                             withAnimation {
-                                showDetailView = true
+                                presentedSheet = .editList
                             }
-                            
+                        } label: {
+                            Image(systemName: "square.and.pencil.circle.fill")
                         }
-                        .listRowBackground(Color.theme.rowBackground)
-                        .swipeActions {
-                            Button {
-                                if let safeUUID = list.list_uuid {
-                                    viewModel.deleteList(listUUID: safeUUID)
-                                }
-                                
-                            } label: {
-                                Image(systemName: "trash.circle.fill")
-                            }
-                        }
+                    }
+                    
                 }
                 
             }
             .scrollContentBackground(.hidden)
         }
-        .fullScreenCover(isPresented: $showDetailView) {
-            if let safeList = viewModel.selectedList {
-                ListDetailView(selectedList: safeList)
-            }
+        .fullScreenCover(item: $presentedSheet, content: { sheet in
+            switch sheet {
+            case .showListDetails:
+                if let safeList = viewModel.selectedList {
+                    ListDetailView(selectedList: safeList)
+                }
                 
-        }
+            case .editList:
+                if let safeList = viewModel.selectedList {
+                    EditListView(selectedList: safeList)
+                }
+            }
+        })
         .padding(.horizontal, Constants.Layout.kPadding/2)
         .background(Color.theme.background)
         

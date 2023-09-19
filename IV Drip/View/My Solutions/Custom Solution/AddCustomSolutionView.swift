@@ -415,42 +415,14 @@ struct AddCustomSolutionView: View {
                         currentlySelectedRow = nil
                     }
                     .focused($focusState, equals: .minimumDose)
-                    //                    ConcentrationRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, userValue: $minimumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = .maximumDose
-                    //                            showMaximumDosePickerWheel = true
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .minimumDose)
-                    //
-                    //
-                    //                    ConcentrationRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, userValue: $maximumDose, selectedConcentrationOption: $selectedConcentrationOption, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = nil
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .maximumDose)
-                    
+              
                 } else if isContinuousInfusion != nil && isContinuousInfusion == 0 {
-                    //                    PushDoseRowView(itemTitle: "MIN Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMinimumDosePickerWheel, userValue: $minimumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow, rowTag: .minimumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = .maximumDose
-                    //                            showMaximumDosePickerWheel = true
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .minimumDose)
                     
                     PushMinMaxRowView(outputMin: $minimumDose, outputMax: $maximumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow) {
                         currentlySelectedRow = nil
                     }
                     .focused($focusState, equals: .minimumDose)
-                    
-                    //                    PushDoseRowView(itemTitle: "MAX Dose", pickerIntCases: 3, pickerDecimalCases: 1, showPickerWheel: $showMaximumDosePickerWheel, userValue: $maximumDose, selectedPushDoseOption: $selectedPushDoseFactor, currentlySelectedRow: $currentlySelectedRow, rowTag: .maximumDose) {
-                    //                        withAnimation {
-                    //                            currentlySelectedRow = nil
-                    //                        }
-                    //                    }
-                    //                    .focused($focusState, equals: .maximumDose)
+
                 }
                 
                 Text("Observations")
@@ -458,10 +430,16 @@ struct AddCustomSolutionView: View {
                 
                 TextField("Observations", text: $observationsField)
                     .textFieldFont()
-                    .frame(height: 88)
-                    .padding(Constants.Layout.kPadding/2)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.leading)
+                    .textSelection(.disabled)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 88, alignment: .topLeading)
                     .background(Color.white)
+                    .padding(Constants.Layout.kTextFieldPadding)
                     .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+                    .focused($focusState, equals: .observation)
+                    
             }
             
         }
@@ -472,13 +450,15 @@ struct AddCustomSolutionView: View {
     var finalResultView: some View {
         if let safeSelectedMed = selectedMyMed {
             let finalWeight = safeSelectedMed.med_weight*Double(selectedMedQuantity)
-            let weightString = String(format: "%.2f", finalWeight)
-            let volume = String(format: "%.1f", dilutionVolume)
+            let weightString = NumberModel(value: finalWeight, numberType: .mass).description
+            let volume = NumberModel(value: dilutionVolume, numberType: .volume).description
+            
             
             let totalVolume = dilutionVolume + safeSelectedMed.med_volume*selectedMedQuantity
-            let totalVolumeString = String(format: "%.1f", totalVolume)
             
-            let concentration = totalVolume == 0 ? " - " : String(format: "%.3f", (finalWeight/totalVolume))
+            let totalVolumeString = NumberModel(value: totalVolume, numberType: .volume).description
+            
+            let concentration = totalVolume == 0 ? " - " : NumberModel(value: (finalWeight/totalVolume), numberType: .concentration).description
             
             VStack (alignment: .leading, spacing: 4) {
                 Text("Resulting Solution")
@@ -553,14 +533,15 @@ struct AddCustomSolutionView: View {
             
         } else {
             let weight = mainComponentWeight*selectedMedQuantity
-            let weightString = String(format: "%.2f", mainComponentWeight*Double(selectedMedQuantity))
+            let weightString = NumberModel(value: mainComponentWeight*Double(selectedMedQuantity), numberType: .mass).description
+            
             let mainComponentVolume = mainComponentAmpVolume*selectedMedQuantity
-            let mainComponentVolumeString = String(format: "%.1f", mainComponentVolume)
-            let volume = String(format: "%.1f", dilutionVolume)
+            let mainComponentVolumeString = NumberModel(value: mainComponentVolume, numberType: .volume).description
+            let volume = NumberModel(value: dilutionVolume, numberType: .volume).description
             
             let totalVolume = dilutionVolume + selectedMedQuantity*mainComponentAmpVolume
-            let totalVolumeString = String(format: "%.1f", totalVolume)
-            let concentration = totalVolume == 0 ? " - " : String(format: "%.3f", (weight/totalVolume))
+            let totalVolumeString = NumberModel(value:totalVolume, numberType: .volume).description
+            let concentration = totalVolume == 0 ? " - " : NumberModel(value: (weight/totalVolume), numberType: .concentration).description
             
             VStack (alignment: .leading, spacing: 4) {
                 Text("Resulting Solution")
@@ -732,34 +713,45 @@ struct AddCustomSolutionView: View {
     
     func saveSolution() {
         // Check if user selected a solution type
+        //TODO: Add criteria for form submission
         guard let solutionType = isContinuousInfusion else {
             return
         }
         
         var minMaxFactor = 9999
+        var minMaxFactorCategory = 9999
         var adjustedMinimumValue = 9999.0
         var adjustedMaximumValue = 9999.0
         //get min_max dose factor and adjusted rate
         if solutionType == 1 {
             switch selectedConcentrationOption {
             case .mcgKgMin:
-                minMaxFactor = 3
+                minMaxFactorCategory = 6
+                minMaxFactor = 611
             case .mcgKgHour:
-                minMaxFactor = 3
+                minMaxFactorCategory = 6
+                minMaxFactor = 612
             case .mcgMin:
-                minMaxFactor = 2
+                minMaxFactorCategory = 5
+                minMaxFactor = 511
             case .mcgHour:
-                minMaxFactor = 2
+                minMaxFactorCategory = 5
+                minMaxFactor = 512
             case .mgKgMin:
-                minMaxFactor = 3
+                minMaxFactorCategory = 6
+                minMaxFactor = 621
             case .mgKgHour:
-                minMaxFactor = 3
+                minMaxFactorCategory = 6
+                minMaxFactor = 622
             case .mgMin:
-                minMaxFactor = 2
+                minMaxFactorCategory = 5
+                minMaxFactor = 521
             case .mgHour:
-                minMaxFactor = 2
+                minMaxFactorCategory = 5
+                minMaxFactor = 522
             case .unitsMin:
-                minMaxFactor = 4
+                minMaxFactorCategory = 7
+                minMaxFactor = 710
             }
             
             adjustedMinimumValue = InfusionCalculator.normalizeInfusionDose(inputFactor: selectedConcentrationOption, value: minimumDose)
@@ -768,15 +760,23 @@ struct AddCustomSolutionView: View {
         } else if solutionType == 0 {
             switch selectedPushDoseFactor {
             case .mg:
-                minMaxFactor = 0
+                minMaxFactorCategory = 1
+                minMaxFactor = 120
             case .mcg:
-                minMaxFactor = 0
+                minMaxFactorCategory = 1
+                minMaxFactor = 110
             case .mgKg:
-                minMaxFactor = 1
+                minMaxFactorCategory = 2
+                minMaxFactor = 220
             case .mcgKg:
-                minMaxFactor = 1
+                minMaxFactorCategory = 3
+                minMaxFactor = 310
             case .unitsKg:
-                minMaxFactor = 5
+                minMaxFactorCategory = 7
+                minMaxFactor = 710
+            case .units:
+                minMaxFactorCategory = 3
+                minMaxFactor = 300
             }
             
             adjustedMinimumValue = InfusionCalculator.normalizePushDose(inputFactor: selectedPushDoseFactor, value: minimumDose)
@@ -799,6 +799,7 @@ struct AddCustomSolutionView: View {
                     minimumDose: minimumDose == 0.0 ? nil : adjustedMinimumValue,
                     maximumDose: maximumDose == 0.0 ? nil : adjustedMaximumValue,
                     minMaxFactor: minMaxFactor,
+                    minMaxCatFactor: minMaxFactorCategory,
                     solutionObservation: observationsField
                 )
                 
@@ -837,6 +838,7 @@ struct AddCustomSolutionView: View {
                     minimumDose: minimumDose == 0.0 ? nil : adjustedMinimumValue,
                     maximumDose: maximumDose == 0.0 ? nil : adjustedMaximumValue,
                     minMaxFactor: minMaxFactor,
+                    minMaxCatFactor: minMaxFactorCategory,
                     solutionObservation: observationsField
                 )
                 

@@ -47,16 +47,17 @@ class InfusionCalculator {
         case .unitsKg:
             guard let safeWeight = patientWeight else {return 999}
             return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+        case .units:
+            return desiredPushDose/solutionConcentrationMgMl
         }
     }
     
-    
-    static func getInfusionRate(desiredInfusionRate: Double, desiredRateMethod: ConcentrationOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
+    static func getInfusionRate(desiredInfusionRate: Double, inputRateMethod: ConcentrationOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
         
         //Solution Concentration must be in mg/ml
         
         if outputRateMethod == .mlHour {
-            switch desiredRateMethod {
+            switch inputRateMethod {
             case .mcgKgMin:
                 guard let safeWeight = patientWeight else { return 999 }
                 return (desiredInfusionRate*60*safeWeight)/(solutionConcentrationMgMl*1000)
@@ -82,7 +83,7 @@ class InfusionCalculator {
             }
         } else {
             //TODO: Unverified calculations, probably all wrong
-            switch desiredRateMethod {
+            switch inputRateMethod {
             case .mcgKgMin:
                 guard let safeWeight = patientWeight else { return 999 }
                 return (desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight
@@ -170,6 +171,7 @@ class InfusionCalculator {
     
     static func normalizePushDose(inputFactor: PushDoseOptions, value: Double) -> Double {
         // Adjusts any push dose value to mg/kg
+        
         switch inputFactor {
         case .mg:
             return value
@@ -179,6 +181,8 @@ class InfusionCalculator {
             return value
         case .mcgKg:
             return value/1000
+        case .units:
+            return value
         case .unitsKg:
             return value
         }
@@ -266,10 +270,11 @@ class InfusionCalculator {
         }
     }
     
-    static func normalizeDatabasePushDose(rateValue: Double, databaseRateFactor: Int, desiredOutputFactor: PushDoseOptions) -> Double? {
+    static func normalizeDatabasePushDose(rateValue: Double, databaseRateCategory: Int, databaseRateFactor: Int, desiredOutputFactor: PushDoseOptions) -> Double? {
+        
         switch desiredOutputFactor {
         case .mg:
-            if databaseRateFactor == 0 {
+            if databaseRateFactor == 120 {
                 return rateValue
             } else {
                 return nil
@@ -298,6 +303,28 @@ class InfusionCalculator {
             } else {
                 return nil
             }
+        case .units:
+            return rateValue
+        }
+    }
+    
+    static func getPushDoseEnum(databaseFactor: Int) -> PushDoseOptions {
+        if databaseFactor == 110 {
+            return .mcg
+        } else if databaseFactor == 120 {
+            return .mg
+        } else if databaseFactor == 210 {
+            return .mcgKg
+        } else if databaseFactor == 220 {
+            return .mgKg
+        } else if databaseFactor == 300 {
+            return .units
+        } else if databaseFactor == 410 {
+            return .unitsKg
+        } else {
+            return .units
         }
     }
 }
+
+

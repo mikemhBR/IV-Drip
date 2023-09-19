@@ -22,9 +22,9 @@ struct SolutionListClass: Identifiable {
     //TODO: check if minDose and maxDose can be "let"
     var minDose: Double?
     var maxDose: Double?
-    var isSelected = false
+    var isSelected: Bool
     
-    init(solutionEntity: CustomSolutionEntity) {
+    init(solutionEntity: CustomSolutionEntity, isSelected: Bool = false) {
         self.solutionEntity = solutionEntity
         self.solutionName = solutionEntity.solution_name ?? ""
         self.solutionType = Int(solutionEntity.solution_type)
@@ -45,10 +45,10 @@ struct SolutionListClass: Identifiable {
             self.maxDose = nil
         }
         
-        
+        self.isSelected = isSelected
     }
     
-    init(solutionName: String, solutionType: Int, mainComponentName: String, mainComponentWeightPerAmp: Double, volumePerAmp: Double, numberAmps: Double, minDose: Double? = nil, maxDose: Double? = nil, dilutionVolume: Double) {
+    init(solutionName: String, solutionType: Int, mainComponentName: String, mainComponentWeightPerAmp: Double, volumePerAmp: Double, numberAmps: Double, minDose: Double? = nil, maxDose: Double? = nil, dilutionVolume: Double, isSelected: Bool = false) {
         self.solutionName = solutionName
         self.solutionType = solutionType
         self.mainComponentName = mainComponentName
@@ -58,6 +58,7 @@ struct SolutionListClass: Identifiable {
         self.dilutionVolume = dilutionVolume
         self.minDose = minDose
         self.maxDose = maxDose
+        self.isSelected = isSelected
     }
     
     static var testData = SolutionListClass(solutionName: "Norepinephrine Drip", solutionType: 1, mainComponentName: "Norepinephrine", mainComponentWeightPerAmp: 4.0, volumePerAmp: 4.0, numberAmps: 4, minDose: 0.05, maxDose: 1.0, dilutionVolume: 234.0)

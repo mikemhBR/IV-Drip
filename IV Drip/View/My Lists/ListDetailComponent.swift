@@ -121,29 +121,30 @@ struct ListDetailComponent: View {
     func getMinMax() {
         
         if solution.solutionType == 1 {
-            if let safeMin = solution.minDose {
-                minDose = String(format: "%.3f", safeMin)
-                let minInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMin, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
-                minInfusion = String(format: "%.1f", minInfusionRate)
+            if let safeSolution = solution.solutionEntity {
+                minDose = NumberModel(value: safeSolution.solution_min, numberType: .dose).description
+                let testMinimumRate = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_min, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
+                let minInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: testMinimumRate.drugDose, inputRateMethod: testMinimumRate.unitOfMeasure, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
+                minInfusion = NumberModel(value: minInfusionRate, numberType: .infusionRate).description
             }
             if let safeMax = solution.maxDose {
-                maxDose = String(format: "%.3f", safeMax)
+                maxDose = NumberModel(value: safeMax, numberType: .dose).description
                 let maxInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMax, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
-                maxInfusion = String(format: "%.1f", maxInfusionRate)
+                maxInfusion = NumberModel(value: maxInfusionRate, numberType: .infusionRate).description
             }
             
             
             
         } else {
             if let safeMin = solution.minDose {
-                minDose = String(format: "%.3f", safeMin)
+                minDose = NumberModel(value: safeMin, numberType: .dose).description
                 let minInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: safeMin, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
-                minInfusion = String(format: "%.1f", minInfusionRate)
+                minInfusion = NumberModel(value: minInfusionRate, numberType: .infusionRate).description
             }
             if let safeMax = solution.maxDose {
-                maxDose = String(format: "%.3f", safeMax)
+                maxDose = NumberModel(value: safeMax, numberType: .dose).description
                 let maxInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: safeMax, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
-                maxInfusion = String(format: "%.1f", maxInfusionRate)
+                maxInfusion = NumberModel(value: maxInfusionRate, numberType: .infusionRate).description
             }
         }
         
@@ -174,7 +175,7 @@ struct ListDetailComponent: View {
                         
                         if let safeMinDose = minDose, let safeMinInfusion = minInfusion {
                             Text("\(safeMinDose) \(getInfusionDoseFactor().rawValue)")
-                                .font(.system(size: 12, weight: .light))
+                                .font(.system(size: 13, weight: .light))
                             
                             Text("\(safeMinInfusion) ml/h")
                                 .font(.system(size: 14, weight: .bold))
@@ -197,7 +198,7 @@ struct ListDetailComponent: View {
                     
                     VStack (alignment: .center, spacing: 2) {
                         Text("Maximum")
-                            .caption3Title()
+                            .caption2Title()
                             .padding(2)
                             .frame(maxWidth: .infinity)
                             .background(Color.white)
@@ -205,7 +206,7 @@ struct ListDetailComponent: View {
                         
                         if let safeMaxDose = maxDose, let safeMaxInfusion = maxInfusion {
                             Text("\(safeMaxDose) \(getInfusionDoseFactor().rawValue)")
-                                .font(.system(size: 12, weight: .light))
+                                .font(.system(size: 13, weight: .light))
                             
                             Text("\(safeMaxInfusion) ml/h")
                                 .font(.system(size: 14, weight: .bold))
@@ -226,7 +227,7 @@ struct ListDetailComponent: View {
                 HStack {
                     VStack (alignment: .center, spacing: 2) {
                         Text("Mininum")
-                            .caption3Title()
+                            .caption2Title()
                             .padding(2)
                             .frame(maxWidth: .infinity)
                             .background(Color.white)
@@ -339,6 +340,17 @@ struct ListDetailComponent: View {
         }
     }
     
+    func getInfusionRateString(value: Double) -> String {
+        let infusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: value, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight, outputRateMethod: .mlHour)
+        return NumberModel(value: infusionRate, numberType: .infusionRate).description
+    }
+    
+    func getPushDoseString(value: Double) -> String {
+        let pushDose = InfusionCalculator.getPushDose(desiredPushDose: value, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight)
+        
+        return NumberModel(value: pushDose, numberType: .infusionRate).description
+    }
+    
     @ViewBuilder
     var horizontalRangeView: some View {
         
@@ -369,19 +381,20 @@ struct ListDetailComponent: View {
                         ForEach(0..<20, id: \.self) { index in
                             let doseStep = safeMin + getDoseRangeStep()*Double(index)
                             VStack (spacing: 2) {
-                                Text("\(String(format: "%.2f", doseStep))")
+                                Text("\(NumberModel(value: doseStep, numberType: .dose).description)")
                                     .font(.system(size: 14, weight: .light))
                                 
                                 Rectangle().fill(Color.gray.opacity(0.4))
                                     .frame(width: 1, height: 9)
                                     
-                                Text("\(String(format: "%.1f", InfusionCalculator.getInfusionRate(desiredInfusionRate: doseStep, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight, outputRateMethod: .mlHour)))")
+                                Text("\(getInfusionRateString(value: doseStep))")
                                     .font(.system(size: 14, weight: .light))
                             }
                         }
                     }
                     
                 }
+                .foregroundColor(Color.theme.primaryText)
                 
             }
         } else {
@@ -417,13 +430,14 @@ struct ListDetailComponent: View {
                                 Rectangle().fill(Color.gray.opacity(0.4))
                                     .frame(width: 1, height: 9)
                                     
-                                Text("\(String(format: "%.1f", InfusionCalculator.getPushDose(desiredPushDose: doseStep, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight)))")
+                                Text("\(getPushDoseString(value: doseStep))")
                                     .font(.system(size: 14, weight: .light))
                             }
                         }
                     }
                     
                 }
+                .foregroundColor(Color.theme.primaryText)
                 
             }
         }

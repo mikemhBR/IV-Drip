@@ -9,7 +9,7 @@ import SwiftUI
 
 class CreateListViewModel: ObservableObject {
     @Published var solutionList = [SolutionListClass]()
-    @Published var listName = "<insert list name>"
+    @Published var listName = ""
     
     var dbBrain = DBBrain.shared
     
@@ -81,7 +81,7 @@ struct CreateListView: View {
                 .sectionHeaderStyle()
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            TextField("", text: $viewModel.listName)
+            TextField("<insert list name>", text: $viewModel.listName)
                 .font(.system(size: 14))
                 .foregroundColor(Color.theme.primaryText)
                 .frame(height: 44)
@@ -99,9 +99,7 @@ struct CreateListView: View {
             
             List {
                 ForEach($viewModel.solutionList, id: \.id) { $solution in
-                    CreateListTileView(solution: solution) { wasSelected in
-                        solution.isSelected = wasSelected
-                    }
+                    CreateListTileView(solution: solution, isSelected: $solution.isSelected)
                     .frame(maxWidth: .infinity)
                     
                     .listRowBackground(Color.theme.background)

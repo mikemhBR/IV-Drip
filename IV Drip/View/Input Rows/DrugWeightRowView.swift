@@ -76,6 +76,7 @@ struct DrugWeightRowView: View {
                     }
                 })
                     .modifier(InputRowTextFieldModifier())
+                    .textSelection(.disabled)
                     .disabled(showPickerWheel)
                     .onTapGesture {
                         withAnimation{

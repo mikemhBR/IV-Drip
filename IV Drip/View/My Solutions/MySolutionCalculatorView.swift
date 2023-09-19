@@ -312,9 +312,9 @@ struct MySolutionCalculatorView: View {
             } else {
                 let outputRateFactor: InfusionRateOptions = desiredInfusionRateFactor == 0 ? .mlHour : .mlMin
                 
-                let minRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMin, desiredRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
+                let minRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMin, inputRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
                 
-                let maxRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMax, desiredRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
+                let maxRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMax, inputRateMethod: .mcgKgMin, solutionConcentrationMgMl: solutionConcentration(), patientWeight: patientWeight, outputRateMethod: outputRateFactor)
                 
                 VStack (alignment: .leading) {
                     Text("Infusion Range")

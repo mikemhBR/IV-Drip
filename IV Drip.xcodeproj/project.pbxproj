@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		270EE0432AA1D748009BB91B /* NumberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270EE0422AA1D748009BB91B /* NumberModel.swift */; };
+		270EE0452AA1EA43009BB91B /* EditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270EE0442AA1EA43009BB91B /* EditListView.swift */; };
 		272BB91E2A8B7C4900A8788A /* HorizontalWheelPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */; };
 		273B13512A9C794700043B0D /* MyListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273B13502A9C794700043B0D /* MyListsView.swift */; };
 		273B13532A9C84E000043B0D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273B13522A9C84E000043B0D /* Color.swift */; };
@@ -73,6 +75,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		270EE0422AA1D748009BB91B /* NumberModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberModel.swift; sourceTree = "<group>"; };
+		270EE0442AA1EA43009BB91B /* EditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditListView.swift; sourceTree = "<group>"; };
 		272BB91D2A8B7C4900A8788A /* HorizontalWheelPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalWheelPicker.swift; sourceTree = "<group>"; };
 		273B13502A9C794700043B0D /* MyListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyListsView.swift; sourceTree = "<group>"; };
 		273B13522A9C84E000043B0D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 				27ABDBA82A9D270800D4A898 /* CreateListTileView.swift */,
 				27483F8D2A9D379C005EBD2A /* ListDetailView.swift */,
 				27ACAF572A9DCF8600652BC5 /* ListDetailComponent.swift */,
+				270EE0442AA1EA43009BB91B /* EditListView.swift */,
 			);
 			path = "My Lists";
 			sourceTree = "<group>";
@@ -232,6 +237,7 @@
 				27D960D72A8CC317002121F3 /* DBBrain.swift */,
 				27A3F5C22A960E720007BC7C /* InfusionCalculator.swift */,
 				273B13522A9C84E000043B0D /* Color.swift */,
+				270EE0422AA1D748009BB91B /* NumberModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -460,6 +466,8 @@
 				2794FE9E2A88BD8400579592 /* ContentView.swift in Sources */,
 				2794FEDB2A88D3DC00579592 /* CalculatorView.swift in Sources */,
 				27B0DD752A89763600C69474 /* LayoutExtensions.swift in Sources */,
+				270EE0432AA1D748009BB91B /* NumberModel.swift in Sources */,
+				270EE0452AA1EA43009BB91B /* EditListView.swift in Sources */,
 				2794FEE12A88E45100579592 /* DrugWeightRowView.swift in Sources */,
 				27FF2FE42A9B4D5600240AF1 /* CustomStepper.swift in Sources */,
 				2794FED12A88BF1600579592 /* DecimalInputRowView.swift in Sources */,
