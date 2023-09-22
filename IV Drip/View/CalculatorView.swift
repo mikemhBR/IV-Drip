@@ -11,6 +11,10 @@ import SwiftUI
 
 struct CalculatorView: View {
     
+    @EnvironmentObject var navigationModel: NavigationModel
+    
+    @AppStorage(Constants.AppStorage.patientWeight) var storedPatientWeight = 0.0
+    
     @State private var selectedTab = 0
     
     @State private var patientWeight = 0.0
@@ -24,13 +28,14 @@ struct CalculatorView: View {
     
     @State private var desiredRateField = 0.0
     @State var showConcentrationWheelPicker = false
-    @State private var selectedConcentrationFactor = ConcentrationOptions.mcgKgMin
+    @State private var selectedConcentrationFactor = DoseOptions.concentrationDose(.mcgKgMin)
     
     @State private var currentInfusionRate = 0.0
     @State var showInfusionRateWheelPicker = false
     @State private var selectedInfusionFactor = InfusionRateOptions.mlHour
     
     @State private var infusionRateResult  = 0.0
+    @State private var infusionResultString = "-"
     @State private var concentrationResult = 0.0
     
     @State var currentlySelectedRow: RowType? = RowType.weight
@@ -39,13 +44,19 @@ struct CalculatorView: View {
         ScrollView {
             VStack (spacing: Constants.Layout.kPadding) {
                 
+                SectionHeaderView(sectionTitle: "Quick Calculator") {
+                    withAnimation {
+                        navigationModel.navigateTo(to: .homeView)
+                    }
+                }
+                
                 Spacer()
                     .frame(height: 1)
                 
                 Text("Patient Weight")
                     .subHeadlineTitle()
                 
-                HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, patientWeight: $patientWeight)
+                HorizontalWheelPicker(viewPadding: Constants.Layout.kPadding/2, initialWeight: Int(storedPatientWeight), patientWeight: $patientWeight)
                 
                 Spacer()
                     .frame(height: 1)
@@ -56,12 +67,11 @@ struct CalculatorView: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 240)
-
+                
                 
                 
                 if selectedTab == 0 {
                     VStack {
-                        
                         
                         DrugWeightRowView(itemTitle: "Drug In Bag",
                                           pickerIntCases: 4,
@@ -95,6 +105,9 @@ struct CalculatorView: View {
                             }
                         }
                         
+                        compositionView
+                            .padding(.vertical, Constants.Layout.kPadding)
+                        
                         ConcentrationRowView(itemTitle: "Desired Rate",
                                              pickerIntCases: 3,
                                              pickerDecimalCases: 1,
@@ -117,13 +130,12 @@ struct CalculatorView: View {
                         
                         Spacer()
                         
-                        Text(String(format: "%.1f", infusionRateResult))
-                            .font(.system(size: 44))
+                        infusionResultView
                         
                         Spacer()
                             .frame(height: Constants.Layout.kPadding)
                         
-
+                        
                     }
                     
                 } else {
@@ -149,7 +161,7 @@ struct CalculatorView: View {
                                 currentlySelectedRow = .drugInBag
                             }
                         }
-                    
+                        
                         
                         VolumeRowView(showPickerWheel: $showVolumeWheelPicker, inputDouble: 0.0, outputValue: $volumeInt, currentlySelectedRow: $currentlySelectedRow, rowTag: .volume) {
                             withAnimation {
@@ -162,6 +174,10 @@ struct CalculatorView: View {
                                 currentlySelectedRow = .volume
                             }
                         }
+                        
+                        
+                        compositionView
+                            .padding(.vertical, Constants.Layout.kPadding)
                         
                         InfusionRowView(itemTitle: "Current Infusion", pickerIntCases: 4, pickerDecimalCases: 1, userValue: $currentInfusionRate, selectedInfusionOption: $selectedInfusionFactor, currentlySelectedRow: $currentlySelectedRow) {
                             withAnimation {
@@ -188,24 +204,143 @@ struct CalculatorView: View {
                         
                     }
                 }
-                      
                 
+                
+            }
+            .onAppear {
+                DispatchQueue.main.async {
+                    let initialWeight = Int(storedPatientWeight.rounded(.down))
+                    patientWeight = Double(initialWeight)
+                }
             }
             .onChange(of: drugInBag) { newValue in
                 calculateConcentration()
-                calculateInfusion()
+                getInfusionRateString()
             }
             .onChange(of: volumeInt) { newValue in
                 calculateConcentration()
-                calculateInfusion()
+                getInfusionRateString()
             }
             .onChange(of: desiredRateField) { newValue in
-                calculateInfusion()
+                getInfusionRateString()
             }
             .onChange(of: currentInfusionRate) { newValue in
                 calculateConcentration()
             }
-        .padding(Constants.Layout.kPadding/2)
+            .onChange(of: patientWeight, perform: { newValue in
+                getInfusionRateString()
+            })
+            .onChange(of: selectedConcentrationFactor, perform: { newValue in
+                getInfusionRateString()
+            })
+            .onDisappear() {
+                storedPatientWeight = patientWeight
+            }
+            .padding(Constants.Layout.kPadding/2)
+        }
+    }
+    
+    var compositionView: some View {
+        let drugString = NumberModel(value: drugInBag, numberType: .mass).description
+        let volumeString = NumberModel(value: volumeInt, numberType: .volume).description
+        
+        return VStack (alignment: .leading, spacing: Constants.Layout.kPadding/4) {
+            HStack (spacing: Constants.Layout.kPadding/2) {
+                Text("Drug in Bag")
+                    .fixedSize()
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(Color("Text"))
+                
+                
+                Rectangle()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 1)
+                    .foregroundColor(Color("Text").opacity(0.2))
+                
+                Text("\(drugString) \(selectedWeightFactor.rawValue)")
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(Color("Text"))
+            }
+            
+            HStack (spacing: Constants.Layout.kPadding/2) {
+                Text("Fluid")
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(Color("Text"))
+                
+                Rectangle()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 1)
+                    .foregroundColor(Color("Text").opacity(0.2))
+                
+                Text("\(volumeString) ml")
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundColor(Color("Text"))
+            }
+            
+            Text("Solution: \(drugString)mg / \(volumeString)ml")
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(Color("Text"))
+            
+            Text("Concentration: \(getConcentrationString()) mg / ml")
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(Color("Text"))
+        }
+        .padding(8)
+        .background(Color.theme.rowBackground)
+        .cornerRadius(Constants.Layout.cornerRadius.small.rawValue)
+        
+    }
+    
+    
+    var infusionResultView: some View {
+        VStack {
+            VStack {
+                Text("Infusion Rate")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(Color("Text"))
+                
+                Text(infusionResultString)
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(Color("Text"))
+                
+            }
+            .padding(Constants.Layout.kPadding)
+            .background(Color.white)
+            .cornerRadius(Constants.Layout.cornerRadius.medium.rawValue)
+            
+            
+//            Picker("Select Infusion Factor", selection: $desiredInfusionRateFactor) {
+//                Text("ml/h").tag(0)
+//                Text("ml/min").tag(1)
+//            }
+//            .pickerStyle(.segmented)
+//            .frame(width: 240)
+//            .frame(maxWidth: .infinity, alignment: .center)
+            
+        }
+    }
+    
+    func getInfusionRateString() {
+        if drugInBag > 0.0 && volumeInt > 0.0 {
+            let result = InfusionCalculator.getInfusionRate(desiredInfusionRate: desiredRateField, inputRateMethod: selectedConcentrationFactor, solutionConcentrationMgMl: concentrationResult, patientWeight: patientWeight, outputRateMethod: .mlHour)
+            
+            print(result)
+            infusionResultString = NumberModel(value: result, numberType: .infusionRate).description
+            
+        } else {
+            infusionResultString = "-"
+        }
+        
+        
+    }
+    
+    func getConcentrationString() -> String {
+        if drugInBag > 0.0 && volumeInt > 0.0 {
+            return NumberModel(value: drugInBag/volumeInt, numberType: .concentration).description
+        } else {
+            return "-"
         }
     }
     
@@ -236,62 +371,10 @@ struct CalculatorView: View {
             }
         }
     }
-    
-    func calculateInfusion() {
-        var weightFactor = 1.0
         
-        switch selectedWeightFactor {
-        case .grams:
-            weightFactor = pow(10, -3)
-        case .miligrams:
-            weightFactor = 1
-        case .micrograms:
-            weightFactor = pow(10, 3)
-        case .units:
-            weightFactor = 1
-        }
-        
-        var timeFactor = 1.0
-        var concentrationFactor = 1.0
-        
-        switch selectedConcentrationFactor {
-        case .mcgKgMin:
-            timeFactor = 60
-            concentrationFactor = 1000
-        case .mcgKgHour:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mcgMin:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mcgHour:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mgKgMin:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mgKgHour:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mgMin:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .mgHour:
-            timeFactor = 1
-            concentrationFactor = 1000
-        case .unitsMin:
-            timeFactor = 60
-            concentrationFactor = 1
-        }
-        
-        if drugInBag != 0 && volumeInt != 0 && desiredRateField != 0 {
-            infusionRateResult = (desiredRateField*Double(patientWeight)*timeFactor) / (drugInBag*weightFactor*concentrationFactor/Double(volumeInt))
-        }
-    }
-    
     func calculateConcentration() {
-        if drugInBag != 0 && volumeInt != 0 && currentInfusionRate != 0 {
-            concentrationResult = ((drugInBag/Double(volumeInt))*currentInfusionRate*1000)/(Double(patientWeight)*60)
+        if drugInBag != 0 && volumeInt != 0 {
+            concentrationResult = drugInBag/volumeInt
         }
     }
 }

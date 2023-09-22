@@ -22,7 +22,10 @@ struct ListDetailComponent: View {
     @State private var minInfusion: String?
     @State private var maxDose: String?
     @State private var maxInfusion: String?
+    @State private var doseOption: DoseOptions?
     @State private var solutionConcentration = 0.0
+    
+    var showHorizontalRange: Bool
     
     init(solution: SolutionListClass, patientWeight: Double) {
         self.solution = solution
@@ -34,9 +37,19 @@ struct ListDetailComponent: View {
         self._finalWeightString = State(initialValue: String(format: "%.1f", solution.mainComponentWeightPerAmp*solution.numberAmps))
         self._finalVolumeString = State(initialValue: String(format: "%.1f", (solution.volumePerAmp*solution.numberAmps) + solution.dilutionVolume))
         
+        if let safeSolution = solution.solutionEntity {
+            if safeSolution.solution_min != 9999 && safeSolution.solution_max != 9999 {
+                self.showHorizontalRange = true
+            } else {
+                self.showHorizontalRange = false
+            }
+        } else {
+            self.showHorizontalRange = false
+        }
+        
         self._solutionConcentration = State(initialValue: getSolutionConcentration())
-                
     }
+    
     var body: some View {
         
         
@@ -120,31 +133,42 @@ struct ListDetailComponent: View {
     
     func getMinMax() {
         
+        guard let safeSolution = solution.solutionEntity else {return}
+        
         if solution.solutionType == 1 {
-            if let safeSolution = solution.solutionEntity {
+            if safeSolution.solution_min != 9999 {
                 minDose = NumberModel(value: safeSolution.solution_min, numberType: .dose).description
+                
                 let testMinimumRate = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_min, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 let minInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: testMinimumRate.drugDose, inputRateMethod: testMinimumRate.unitOfMeasure, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
                 minInfusion = NumberModel(value: minInfusionRate, numberType: .infusionRate).description
+                doseOption = testMinimumRate.unitOfMeasure
             }
-            if let safeMax = solution.maxDose {
-                maxDose = NumberModel(value: safeMax, numberType: .dose).description
-                let maxInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: safeMax, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
+            if safeSolution.solution_max != 9999 {
+                maxDose = NumberModel(value: safeSolution.solution_max, numberType: .dose).description
+                let testMaximumRate = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_max, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
+                let maxInfusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: testMaximumRate.drugDose, inputRateMethod: testMaximumRate.unitOfMeasure, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
                 maxInfusion = NumberModel(value: maxInfusionRate, numberType: .infusionRate).description
+                doseOption = testMaximumRate.unitOfMeasure
             }
             
             
-            
+            //TODO: Check if else statement can be deleted
         } else {
-            if let safeMin = solution.minDose {
-                minDose = NumberModel(value: safeMin, numberType: .dose).description
-                let minInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: safeMin, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
+            if safeSolution.solution_min != 9999 {
+                minDose = NumberModel(value: safeSolution.solution_min, numberType: .dose).description
+               
+                let testMinimumRate = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_min, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
+                let minInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: testMinimumRate.drugDose, inputDoseOption: testMinimumRate.unitOfMeasure, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
                 minInfusion = NumberModel(value: minInfusionRate, numberType: .infusionRate).description
+                doseOption = testMinimumRate.unitOfMeasure
             }
-            if let safeMax = solution.maxDose {
-                maxDose = NumberModel(value: safeMax, numberType: .dose).description
-                let maxInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: safeMax, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
+            if safeSolution.solution_max != 9999 {
+                maxDose = NumberModel(value: safeSolution.solution_min, numberType: .dose).description
+                let testMaximumRate = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_max, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
+                let maxInfusionRate = InfusionCalculator.getPushDose(desiredPushDose: testMaximumRate.drugDose, inputDoseOption: testMaximumRate.unitOfMeasure, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
                 maxInfusion = NumberModel(value: maxInfusionRate, numberType: .infusionRate).description
+                doseOption = testMaximumRate.unitOfMeasure
             }
         }
         
@@ -157,126 +181,132 @@ struct ListDetailComponent: View {
     
     @ViewBuilder
     var doseRangeView: some View {
-        if solution.solutionType == 1 {
-            VStack (alignment: .leading, spacing: 0) {
-                Text("Dose Range")
-                    .captionTitle()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
+        if let safeSolution = solution.solutionEntity {
+            if solution.solutionType == 1 && safeSolution.solution_min != 9999 {
                 
-                HStack {
-                    VStack (alignment: .center, spacing: 2) {
-                        Text("Mininum")
-                            .caption3Title()
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(2)
-                        
-                        if let safeMinDose = minDose, let safeMinInfusion = minInfusion {
-                            Text("\(safeMinDose) \(getInfusionDoseFactor().rawValue)")
-                                .font(.system(size: 13, weight: .light))
-                            
-                            Text("\(safeMinInfusion) ml/h")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                        
-                    }
-                    .fixedSize(horizontal: true, vertical: false)
-                    
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.theme.secondaryText)
-                    
-                    Rectangle()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 1)
-                    
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.theme.secondaryText)
-                    
-                    VStack (alignment: .center, spacing: 2) {
-                        Text("Maximum")
-                            .caption2Title()
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(2)
-                        
-                        if let safeMaxDose = maxDose, let safeMaxInfusion = maxInfusion {
-                            Text("\(safeMaxDose) \(getInfusionDoseFactor().rawValue)")
-                                .font(.system(size: 13, weight: .light))
-                            
-                            Text("\(safeMaxInfusion) ml/h")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                    }
-                    .fixedSize()
-                }
-                .foregroundColor(Color("Text"))
-            }
-            
-        } else {
-            VStack (alignment: .leading, spacing: 0) {
-                Text("Dose Range")
-                    .captionTitle()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    
+                let testMinimum = DatabaseInfusionDoseStruct(initialValue: safeSolution.solution_min, databaseUnitOfMeasure: Int(safeSolution.min_max_factor))
                 
-                HStack {
-                    VStack (alignment: .center, spacing: 2) {
-                        Text("Mininum")
-                            .caption2Title()
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(2)
+                VStack (alignment: .leading, spacing: 0) {
+                    Text("Dose Range")
+                        .captionTitle()
+                        .frame(maxWidth: .infinity, alignment: .center)
                         
-                        if let safeMinDose = minDose, let safeMinInfusion = minInfusion {
-                            Text("\(safeMinDose) \(getPushDoseFactor().rawValue)")
-                                .font(.system(size: 12, weight: .light))
+                    
+                    HStack {
+                        VStack (alignment: .center, spacing: 2) {
+                            Text("Mininum")
+                                .caption3Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
                             
-                            Text("\(safeMinInfusion) ml")
-                                .font(.system(size: 14, weight: .bold))
-                        }
-                        
-                    }
-                    .fixedSize(horizontal: true, vertical: false)
-                    
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.theme.secondaryText)
-                    
-                    Rectangle()
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 1)
-                    
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.theme.secondaryText)
-                    
-                    VStack (alignment: .center, spacing: 2) {
-                        Text("Maximum")
-                            .caption3Title()
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(2)
-                        
-                        if let safeMaxDose = maxDose, let safeMaxInfusion = maxInfusion {
-                            Text("\(safeMaxDose) \(getPushDoseFactor().rawValue)")
-                                .font(.system(size: 12, weight: .light))
+                            if let safeMinInfusion = minInfusion {
+                                Text("\(testMinimum.doseString) \(testMinimum.unitOfMeasure.rawValue)")
+                                    .font(.system(size: 13, weight: .light))
+                                
+                                Text("\(safeMinInfusion) ml/h")
+                                    .font(.system(size: 14, weight: .bold))
+                            }
                             
-                            Text("\(safeMaxInfusion) ml")
-                                .font(.system(size: 14, weight: .bold))
                         }
+                        .fixedSize(horizontal: true, vertical: false)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Rectangle()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 1)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        VStack (alignment: .center, spacing: 2) {
+                            Text("Maximum")
+                                .caption2Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                            
+                            if let safeMaxDose = maxDose, let safeMaxInfusion = maxInfusion {
+                                Text("\(safeMaxDose) \(getInfusionDoseFactor().rawValue)")
+                                    .font(.system(size: 13, weight: .light))
+                                
+                                Text("\(safeMaxInfusion) ml/h")
+                                    .font(.system(size: 14, weight: .bold))
+                            }
+                        }
+                        .fixedSize()
                     }
-                    .fixedSize()
+                    .foregroundColor(Color("Text"))
                 }
-                .foregroundColor(Color("Text"))
+                
+            } else {
+                VStack (alignment: .leading, spacing: 0) {
+                    Text("Dose Range")
+                        .captionTitle()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        
+                    
+                    HStack {
+                        VStack (alignment: .center, spacing: 2) {
+                            Text("Mininum")
+                                .caption2Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                            
+                            if let safeMinDose = minDose, let safeMinInfusion = minInfusion {
+                                Text("\(safeMinDose) \(getPushDoseFactor().rawValue)")
+                                    .font(.system(size: 12, weight: .light))
+                                
+                                Text("\(safeMinInfusion) ml")
+                                    .font(.system(size: 14, weight: .bold))
+                            }
+                            
+                        }
+                        .fixedSize(horizontal: true, vertical: false)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        Rectangle()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 1)
+                        
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(Color.theme.secondaryText)
+                        
+                        VStack (alignment: .center, spacing: 2) {
+                            Text("Maximum")
+                                .caption3Title()
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white)
+                                .cornerRadius(2)
+                            
+                            if let safeMaxDose = maxDose, let safeMaxInfusion = maxInfusion {
+                                Text("\(safeMaxDose) \(getPushDoseFactor().rawValue)")
+                                    .font(.system(size: 12, weight: .light))
+                                
+                                Text("\(safeMaxInfusion) ml")
+                                    .font(.system(size: 14, weight: .bold))
+                            }
+                        }
+                        .fixedSize()
+                    }
+                    .foregroundColor(Color("Text"))
+                }
             }
         }
+        
         
     }
     
@@ -341,106 +371,119 @@ struct ListDetailComponent: View {
     }
     
     func getInfusionRateString(value: Double) -> String {
-        let infusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: value, desiredRateMethod: getInfusionDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight, outputRateMethod: .mlHour)
-        return NumberModel(value: infusionRate, numberType: .infusionRate).description
+        if let safeDoseOption = doseOption {
+            let infusionRate = InfusionCalculator.getInfusionRate(desiredInfusionRate: value, inputRateMethod: safeDoseOption, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight, outputRateMethod: .mlHour)
+            return NumberModel(value: infusionRate, numberType: .infusionRate).description
+        } else {
+            return "error"
+        }
+        
     }
     
     func getPushDoseString(value: Double) -> String {
-        let pushDose = InfusionCalculator.getPushDose(desiredPushDose: value, desiredPushMethod: getPushDoseFactor(), solutionConcentrationMgMl: getSolutionConcentration(), patientWeight: patientWeight)
+        if let safeDoseOption = doseOption {
+            let pushDose = InfusionCalculator.getPushDose(desiredPushDose: value, inputDoseOption: safeDoseOption, solutionConcentrationMgMl: solutionConcentration, patientWeight: patientWeight)
+            
+            return NumberModel(value: pushDose, numberType: .infusionRate).description
+        } else {
+            return "error push dose"
+        }
         
-        return NumberModel(value: pushDose, numberType: .infusionRate).description
     }
     
     @ViewBuilder
     var horizontalRangeView: some View {
         
-        if solution.solutionType == 1 {
-            ScrollView (.horizontal, showsIndicators: false) {
-                HStack {
-                    VStack (alignment: .trailing, spacing: 2) {
-                        Text("\(getInfusionDoseFactor().rawValue)")
-                            .font(.system(size: 12, weight: .light))
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.6))
-                            .cornerRadius(2)
+        if showHorizontalRange {
+            if solution.solutionType == 1 {
+                ScrollView (.horizontal, showsIndicators: false) {
+                    HStack {
+                        VStack (alignment: .trailing, spacing: 2) {
+                            Text("\(getInfusionDoseFactor().rawValue)")
+                                .font(.system(size: 12, weight: .light))
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white.opacity(0.6))
+                                .cornerRadius(2)
+                            
+                            Spacer()
+                                .frame(height: 5)
+                            
+                            Text("ml/h")
+                                .font(.system(size: 12, weight: .light))
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white.opacity(0.6))
+                                .cornerRadius(2)
+                        }
                         
-                        Spacer()
-                            .frame(height: 5)
-                        
-                        Text("ml/h")
                             .font(.system(size: 12, weight: .light))
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.6))
-                            .cornerRadius(2)
-                    }
-                    
-                        .font(.system(size: 12, weight: .light))
-                    if let safeMin = solution.minDose, let safeMax = solution.maxDose {
-                        ForEach(0..<20, id: \.self) { index in
-                            let doseStep = safeMin + getDoseRangeStep()*Double(index)
-                            VStack (spacing: 2) {
-                                Text("\(NumberModel(value: doseStep, numberType: .dose).description)")
-                                    .font(.system(size: 14, weight: .light))
-                                
-                                Rectangle().fill(Color.gray.opacity(0.4))
-                                    .frame(width: 1, height: 9)
+                        if let safeMin = solution.minDose, let safeMax = solution.maxDose {
+                            ForEach(0..<20, id: \.self) { index in
+                                let doseStep = safeMin + getDoseRangeStep()*Double(index)
+                                VStack (spacing: 2) {
+                                    Text("\(NumberModel(value: doseStep, numberType: .dose).description)")
+                                        .font(.system(size: 14, weight: .light))
                                     
-                                Text("\(getInfusionRateString(value: doseStep))")
-                                    .font(.system(size: 14, weight: .light))
+                                    Rectangle().fill(Color.gray.opacity(0.4))
+                                        .frame(width: 1, height: 9)
+                                        
+                                    Text("\(getInfusionRateString(value: doseStep))")
+                                        .font(.system(size: 14, weight: .light))
+                                }
                             }
                         }
+                        
                     }
+                    .foregroundColor(Color.theme.primaryText)
                     
                 }
-                .foregroundColor(Color.theme.primaryText)
-                
-            }
-        } else {
-            ScrollView (.horizontal, showsIndicators: false) {
-                HStack {
-                    VStack (alignment: .trailing, spacing: 2) {
-                        Text("\(getPushDoseFactor().rawValue)")
-                            .font(.system(size: 12, weight: .light))
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.6))
-                            .cornerRadius(2)
+            } else {
+                ScrollView (.horizontal, showsIndicators: false) {
+                    HStack {
+                        VStack (alignment: .trailing, spacing: 2) {
+                            Text("\(getPushDoseFactor().rawValue)")
+                                .font(.system(size: 12, weight: .light))
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white.opacity(0.6))
+                                .cornerRadius(2)
+                            
+                            Spacer()
+                                .frame(height: 5)
+                            
+                            Text("ml")
+                                .font(.system(size: 12, weight: .light))
+                                .padding(2)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.white.opacity(0.6))
+                                .cornerRadius(2)
+                        }
                         
-                        Spacer()
-                            .frame(height: 5)
-                        
-                        Text("ml")
                             .font(.system(size: 12, weight: .light))
-                            .padding(2)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white.opacity(0.6))
-                            .cornerRadius(2)
-                    }
-                    
-                        .font(.system(size: 12, weight: .light))
-                    if let safeMin = solution.minDose, let safeMax = solution.maxDose {
-                        ForEach(0..<20, id: \.self) { index in
-                            let doseStep = safeMin + getDoseRangeStep()*Double(index)
-                            VStack (spacing: 2) {
-                                Text("\(String(format: "%.2f", doseStep))")
-                                    .font(.system(size: 14, weight: .light))
-                                
-                                Rectangle().fill(Color.gray.opacity(0.4))
-                                    .frame(width: 1, height: 9)
+                        if let safeMin = solution.minDose, let safeMax = solution.maxDose {
+                            ForEach(0..<20, id: \.self) { index in
+                                let doseStep = safeMin + getDoseRangeStep()*Double(index)
+                                VStack (spacing: 2) {
+                                    Text("\(String(format: "%.2f", doseStep))")
+                                        .font(.system(size: 14, weight: .light))
                                     
-                                Text("\(getPushDoseString(value: doseStep))")
-                                    .font(.system(size: 14, weight: .light))
+                                    Rectangle().fill(Color.gray.opacity(0.4))
+                                        .frame(width: 1, height: 9)
+                                        
+                                    Text("\(getPushDoseString(value: doseStep))")
+                                        .font(.system(size: 14, weight: .light))
+                                }
                             }
                         }
+                        
                     }
+                    .foregroundColor(Color.theme.primaryText)
                     
                 }
-                .foregroundColor(Color.theme.primaryText)
-                
             }
         }
+        
         
         
     }

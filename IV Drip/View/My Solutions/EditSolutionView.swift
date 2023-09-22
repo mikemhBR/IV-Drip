@@ -46,7 +46,7 @@ struct EditSolutionView: View {
     @State private var showDetailForm = false
     
     @State private var showMinimumDosePickerWheel = false
-    @State private var selectedConcentrationOption = ConcentrationOptions.mcgKgMin
+    @State private var selectedConcentrationOption = DoseOptions.concentrationDose(.mcgKgMin)
     @State private var selectedOptionalWeightOption = WeightOptions.miligrams
     @State private var minimumDose = 0.0
     
@@ -87,6 +87,10 @@ struct EditSolutionView: View {
         }
         
         _observationsField = State(initialValue: solution.solution_obs ?? "")
+        
+        if solution.min_max_factor != 0 {
+            self.selectedConcentrationOption = InfusionCalculator.getDatabaseRateFactor(databaseFactor: Int(solution.min_max_factor))
+        }
                 
     }
     

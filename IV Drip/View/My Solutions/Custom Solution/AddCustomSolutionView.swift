@@ -520,7 +520,7 @@ struct AddCustomSolutionView: View {
                         Image(systemName: "arrow.left.and.right")
                             .frame(maxWidth: .infinity)
                         
-                        Text(concentration + "\(selectedWeightOption.rawValue) / ml")
+                        Text("\(concentration) \(selectedWeightOption.rawValue) / ml")
                             .font(.system(size: 14, weight: .semibold))
                             .fixedSize()
                     }
@@ -608,6 +608,9 @@ struct AddCustomSolutionView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                         
                         if isContinuousInfusion == 1 {
+                            let minDose = NumberModel(value: minimumDose, numberType: .dose).description
+                            let maxDose = NumberModel(value: maximumDose, numberType: .dose).description
+                            
                             HStack {
                                 VStack (spacing: 2) {
                                     Text("Mininum")
@@ -617,7 +620,7 @@ struct AddCustomSolutionView: View {
                                         .background(Color.white)
                                         .cornerRadius(2)
                                     
-                                    Text(String(format: "%.2f", minimumDose) + " " + selectedConcentrationOption.rawValue)
+                                    Text("\(minDose) \(selectedConcentrationOption.rawValue)")
                                         .font(.system(size: 14, weight: .semibold))
                                 }
                                 .fixedSize()
@@ -644,7 +647,7 @@ struct AddCustomSolutionView: View {
                                         .background(Color.white)
                                         .cornerRadius(2)
                                     
-                                    Text(String(format: "%.2f", maximumDose) + " " + selectedConcentrationOption.rawValue)
+                                    Text("\(maxDose) \(selectedConcentrationOption.rawValue)")
                                         .font(.system(size: 14, weight: .semibold))
                                     
                                 }
@@ -652,6 +655,8 @@ struct AddCustomSolutionView: View {
                                 
                             }
                         } else if isContinuousInfusion == 0 {
+                            let minDose = NumberModel(value: minimumDose, numberType: .dose).description
+                            let maxDose = NumberModel(value: maximumDose, numberType: .dose).description
                             HStack {
                                 VStack (spacing: 2) {
                                     Text("Mininum")
@@ -661,7 +666,7 @@ struct AddCustomSolutionView: View {
                                         .background(Color.white)
                                         .cornerRadius(2)
                                     
-                                    Text(String(format: "%.2f", minimumDose) + " " + selectedPushDoseFactor.rawValue)
+                                    Text("\(minDose) \(selectedPushDoseFactor.rawValue)")
                                         .font(.system(size: 14, weight: .semibold))
                                 }
                                 .fixedSize()
@@ -686,7 +691,7 @@ struct AddCustomSolutionView: View {
                                         .background(Color.white)
                                         .cornerRadius(2)
                                     
-                                    Text(String(format: "%.2f", maximumDose) + " " + selectedPushDoseFactor.rawValue)
+                                    Text("\(maxDose) \(selectedPushDoseFactor.rawValue)")
                                         .font(.system(size: 14, weight: .semibold))
                                     
                                 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum DoseOptions {
+enum DoseOptions: Hashable {
     
     case pushDose(PushDoseOptions)
     case concentrationDose(ConcentrationOptions)
@@ -46,6 +46,18 @@ enum DoseOptions {
         case unitsKg = "U/kg"
         case units = "units"
         
+    }
+    
+    static var allPushOptions: [DoseOptions] {
+        return [
+            .pushDose(.mg), .pushDose(.mcg), .pushDose(.mgKg), .pushDose(.mcgKg), .pushDose(.unitsKg), .pushDose(.units)
+        ]
+    }
+    
+    static var allInfusionOptions: [DoseOptions] {
+        return [
+            .concentrationDose(.mcgKgMin), .concentrationDose(.mcgKgHour), .concentrationDose(.mcgMin), .concentrationDose(.mcgHour), .concentrationDose(.mgKgMin), .concentrationDose(.mgKgHour), .concentrationDose(.mgMin), .concentrationDose(.mgHour), .concentrationDose(.unitsMin)
+        ]
     }
 }
 
@@ -262,11 +274,80 @@ protocol DoseProtocol {
 //
 //}
 
+//TODO: test struct. delete if needed
+struct DatabaseDoseStruct: DoseProtocol {
+    var drugDose: Double
+    var doseString: String
+    var unitOfMeasure: DoseOptions
+    var doseType: Int
+    
+    init(initialValue: Double, databaseUnitOfMeasure: Int) {
+        drugDose = initialValue
+        doseString = NumberModel(value: initialValue, numberType: .dose).description
+        
+        if databaseUnitOfMeasure == 110 {
+            unitOfMeasure = DoseOptions.pushDose(.mcg)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 120 {
+            unitOfMeasure = DoseOptions.pushDose(.mg)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 210 {
+            unitOfMeasure = DoseOptions.pushDose(.mcgKg)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 220 {
+            unitOfMeasure = DoseOptions.pushDose(.mgKg)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 300 {
+            unitOfMeasure = DoseOptions.pushDose(.units)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 410 {
+            unitOfMeasure = DoseOptions.pushDose(.unitsKg)
+            doseType = 0
+        } else if databaseUnitOfMeasure == 511 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgMin)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 512 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgHour)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 521 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mgMin)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 522 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mgHour)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 611 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgKgMin)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 612 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgKgHour)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 621 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mgKgMin)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 622 {
+            unitOfMeasure = DoseOptions.concentrationDose(.mgKgHour)
+            doseType = 1
+        } else if databaseUnitOfMeasure == 710 {
+            unitOfMeasure = DoseOptions.concentrationDose(.unitsMin)
+            doseType = 1
+        } else {
+            unitOfMeasure = DoseOptions.concentrationDose(.unitsMin)
+            doseType = 1
+        }
+    }
+}
+
 struct DatabasePushDoseStruct: DoseProtocol {
     
     var drugDose: Double
     var doseString: String
     var unitOfMeasure: DoseOptions
+    
+    init(initialValue: Double, unitOfMeasure: DoseOptions) {
+        self.drugDose = initialValue
+        self.doseString = NumberModel(value: initialValue, numberType: .dose).description
+        self.unitOfMeasure = unitOfMeasure
+    }
     
     init(initialValue: Double, databaseUnitOfMeasure: Int) {
         drugDose = initialValue
@@ -289,12 +370,38 @@ struct DatabasePushDoseStruct: DoseProtocol {
         }
     }
     
+    init(initialValue: Double, databaseUnitOfMeasure: PushDoseOptions) {
+        drugDose = initialValue
+        doseString = NumberModel(value: initialValue, numberType: .dose).description
+        
+        switch databaseUnitOfMeasure {
+        case .mg:
+            unitOfMeasure = DoseOptions.pushDose(.mg)
+        case .mcg:
+            unitOfMeasure = DoseOptions.pushDose(.mcg)
+        case .mgKg:
+            unitOfMeasure = DoseOptions.pushDose(.mgKg)
+        case .mcgKg:
+            unitOfMeasure = DoseOptions.pushDose(.mcgKg)
+        case .unitsKg:
+            unitOfMeasure = DoseOptions.pushDose(.unitsKg)
+        case .units:
+            unitOfMeasure = DoseOptions.pushDose(.units)
+        }
+    }
+    
 }
 
 struct DatabaseInfusionDoseStruct {
     let drugDose: Double
     var doseString: String
     var unitOfMeasure: DoseOptions
+    
+    init(initialValue: Double, unitOfMeasure: DoseOptions) {
+        self.drugDose = initialValue
+        self.doseString = NumberModel(value: initialValue, numberType: .dose).description
+        self.unitOfMeasure = unitOfMeasure
+    }
     
     init(initialValue: Double, databaseUnitOfMeasure: Int) {
         drugDose = initialValue
@@ -322,6 +429,32 @@ struct DatabaseInfusionDoseStruct {
             unitOfMeasure = DoseOptions.concentrationDose(.unitsMin)
         }
         
+    }
+    
+    init(initialValue: Double, databaseUnitOfMeasure: ConcentrationOptions) {
+        drugDose = initialValue
+        doseString = NumberModel(value: initialValue, numberType: .dose).description
+        
+        switch databaseUnitOfMeasure {
+        case .mcgKgMin:
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgKgMin)
+        case .mcgKgHour:
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgKgHour)
+        case .mcgMin:
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgMin)
+        case .mcgHour:
+            unitOfMeasure = DoseOptions.concentrationDose(.mcgHour)
+        case .mgKgMin:
+            unitOfMeasure = DoseOptions.concentrationDose(.mgKgMin)
+        case .mgKgHour:
+            unitOfMeasure = DoseOptions.concentrationDose(.mgKgHour)
+        case .mgMin:
+            unitOfMeasure = DoseOptions.concentrationDose(.mgMin)
+        case .mgHour:
+            unitOfMeasure = DoseOptions.concentrationDose(.mgHour)
+        case .unitsMin:
+            unitOfMeasure = DoseOptions.concentrationDose(.unitsMin)
+        }
     }
 }
 

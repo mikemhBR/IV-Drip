@@ -52,6 +52,7 @@ struct NumberModel: CustomStringConvertible {
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 1
+       
         return formatter
     }()
     

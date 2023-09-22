@@ -46,7 +46,7 @@ struct InfusionRowView: View {
                     Image(systemName: "plusminus.circle.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 28)
+                        .frame(width: 28, height: 28)
                 }
                 
                 TextField("Infusion Velocity", text: $inputTextField, onEditingChanged: { isEditing in

@@ -18,10 +18,8 @@ struct ConcentrationRowView: View {
     @State var inputDouble = 0.0
     
     @Binding var userValue: Double
-    @Binding var selectedConcentrationOption: ConcentrationOptions
-    
-    @State private var concentrationOption: ConcentrationOptions = .mcgKgMin
-    
+    @Binding var selectedConcentrationOption: DoseOptions
+        
     let isFinalField = false
     
     @Binding var currentlySelectedRow: RowType?
@@ -29,7 +27,7 @@ struct ConcentrationRowView: View {
     let rowTag: RowType
     let buttonTapped: ()->()
     
-    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputDouble: Double = 0.0, userValue: Binding<Double>, selectedConcentrationOption: Binding<ConcentrationOptions>, concentrationOption: ConcentrationOptions = .mcgKgMin, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
+    init(itemTitle: String, pickerIntCases: Int, pickerDecimalCases: Int, showPickerWheel: Binding<Bool>, inputDouble: Double = 0.0, userValue: Binding<Double>, selectedConcentrationOption: Binding<DoseOptions>, currentlySelectedRow: Binding<RowType?>, rowTag: RowType, buttonTapped: @escaping () -> Void) {
         self.itemTitle = itemTitle
         self.pickerIntCases = pickerIntCases
         self.pickerDecimalCases = pickerDecimalCases
@@ -49,7 +47,7 @@ struct ConcentrationRowView: View {
                 Text(itemTitle)
                     .font(.system(size: Constants.Layout.fontSize.inputRow.rawValue, weight: .bold))
                     .foregroundColor(Color("Text"))
-                     
+                
                 Spacer()
                 
                 Button {
@@ -75,31 +73,31 @@ struct ConcentrationRowView: View {
                         inputDouble = Double(inputTextField) ?? 0.0
                     }
                 })
-                    .modifier(InputRowTextFieldModifier())
-                    .disabled(showPickerWheel)
-                    .onTapGesture {
-                        withAnimation{
-                            showPickerWheel = false
-                        }
+                .modifier(InputRowTextFieldModifier())
+                .disabled(showPickerWheel)
+                .onTapGesture {
+                    withAnimation{
+                        showPickerWheel = false
                     }
-                    .onSubmit {
-                        inputDouble = Double(inputTextField) ?? 0.0
-                    }
-                 
+                }
+                .onSubmit {
+                    inputDouble = Double(inputTextField) ?? 0.0
+                }
+                
                 Menu {
-                    Picker("test", selection: $concentrationOption) {
-                        ForEach(ConcentrationOptions.allCases, id: \.self) { option in
+                    Picker("test", selection: $selectedConcentrationOption) {
+                        ForEach(DoseOptions.allInfusionOptions, id: \.self) { option in
                             Text(option.rawValue)
                                 .font(.system(size: 14))
-                                
+                            
                         }
                     }
                 } label: {
-                    Text(concentrationOption.rawValue)
+                    Text(selectedConcentrationOption.rawValue)
                         .modifier(InputRowButtonModifier())
                 }
                 
-
+                
                 
                 
                 
@@ -107,8 +105,8 @@ struct ConcentrationRowView: View {
             
             if showPickerWheel && (currentlySelectedRow == rowTag) {
                 DecimalWheelPicker(intCases: pickerIntCases, decimalCases: pickerDecimalCases, selection: $inputDouble, initialValue: inputDouble)
-                    
-                    
+                
+                
                 Button("OK") {
                     inputTextField = String(format: "%.\(pickerDecimalCases)f", inputDouble)
                     withAnimation {
@@ -117,7 +115,7 @@ struct ConcentrationRowView: View {
                     buttonTapped()
                 }
             }
-                
+            
             
         }
         .padding(Constants.Layout.kPadding/2)
@@ -127,13 +125,9 @@ struct ConcentrationRowView: View {
             inputTextField = String(format: "%.\(pickerDecimalCases)f", newValue)
             userValue = newValue
         }
-        .onChange(of: concentrationOption) { newValue in
-            selectedConcentrationOption = newValue
-        }
-        
     }
     
-    }
+}
 
 //struct ConcentrationRowView_Previews: PreviewProvider {
 //    static var previews: some View {

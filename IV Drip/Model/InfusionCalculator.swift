@@ -31,82 +31,189 @@ class InfusionCalculator {
             return inputWeight
         }
     }
-    static func getPushDose(desiredPushDose: Double, desiredPushMethod: PushDoseOptions, solutionConcentrationMgMl: Double, patientWeight: Double?) -> Double {
+    
+    //    static func getPushDose(desiredPushDose: Double, desiredPushMethod: PushDoseOptions, solutionConcentrationMgMl: Double, patientWeight: Double?) -> Double {
+    //
+    //        switch desiredPushMethod {
+    //        case .mg:
+    //            return desiredPushDose/solutionConcentrationMgMl
+    //        case .mcg:
+    //            return (desiredPushDose/1000)/solutionConcentrationMgMl
+    //        case .mgKg:
+    //            guard let safeWeight = patientWeight else {return 999}
+    //            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+    //        case .mcgKg:
+    //            guard let safeWeight = patientWeight else {return 999}
+    //            return ((desiredPushDose/1000)*safeWeight)/solutionConcentrationMgMl
+    //        case .unitsKg:
+    //            guard let safeWeight = patientWeight else {return 999}
+    //            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+    //        case .units:
+    //            return desiredPushDose/solutionConcentrationMgMl
+    //        }
+    //    }
+    
+    static func getPushDose(desiredPushDose: Double, inputDoseOption: DoseOptions, solutionConcentrationMgMl: Double, patientWeight: Double?) -> Double {
         
-        switch desiredPushMethod {
-        case .mg:
-            return desiredPushDose/solutionConcentrationMgMl
-        case .mcg:
-            return (desiredPushDose/1000)/solutionConcentrationMgMl
-        case .mgKg:
-            guard let safeWeight = patientWeight else {return 999}
-            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
-        case .mcgKg:
-            guard let safeWeight = patientWeight else {return 999}
-            return ((desiredPushDose/1000)*safeWeight)/solutionConcentrationMgMl
-        case .unitsKg:
-            guard let safeWeight = patientWeight else {return 999}
-            return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
-        case .units:
-            return desiredPushDose/solutionConcentrationMgMl
+        switch inputDoseOption {
+        case .pushDose(let pushDoseOptions):
+            switch pushDoseOptions {
+            case .mg:
+                return desiredPushDose/solutionConcentrationMgMl
+            case .mcg:
+                return (desiredPushDose/1000)/solutionConcentrationMgMl
+            case .mgKg:
+                guard let safeWeight = patientWeight else {return 999}
+                return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+            case .mcgKg:
+                guard let safeWeight = patientWeight else {return 999}
+                return ((desiredPushDose/1000)*safeWeight)/solutionConcentrationMgMl
+            case .unitsKg:
+                guard let safeWeight = patientWeight else {return 999}
+                return (desiredPushDose*safeWeight)/solutionConcentrationMgMl
+            case .units:
+                return desiredPushDose/solutionConcentrationMgMl
+            }
+        case .concentrationDose(let concentrationOptions):
+            return 7777
         }
+        
     }
     
-    static func getInfusionRate(desiredInfusionRate: Double, inputRateMethod: ConcentrationOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
+    
+    //    static func getInfusionRate(desiredInfusionRate: Double, inputRateMethod: ConcentrationOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
+    //
+    //        //Solution Concentration must be in mg/ml
+    //
+    //        if outputRateMethod == .mlHour {
+    //            switch inputRateMethod {
+    //            case .mcgKgMin:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate*60*safeWeight)/(solutionConcentrationMgMl*1000)
+    //            case .mcgKgHour:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl*1000)
+    //            case .mcgMin:
+    //                return (desiredInfusionRate*60)/(solutionConcentrationMgMl*1000)
+    //            case .mcgHour:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
+    //            case .mgKgMin:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate*safeWeight*60)/(solutionConcentrationMgMl)
+    //            case .mgKgHour:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl)
+    //            case .mgMin:
+    //                return (desiredInfusionRate*60)/(solutionConcentrationMgMl)
+    //            case .mgHour:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl))
+    //            case .unitsMin:
+    //                return (desiredInfusionRate*60)/solutionConcentrationMgMl
+    //            }
+    //        } else {
+    //            //TODO: Unverified calculations, probably all wrong
+    //            switch inputRateMethod {
+    //            case .mcgKgMin:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight
+    //            case .mcgKgHour:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return ((desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight)/60
+    //            case .mcgMin:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
+    //            case .mcgHour:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))/60
+    //            case .mgKgMin:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight
+    //            case .mgKgHour:
+    //                guard let safeWeight = patientWeight else { return 999 }
+    //                return ((desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight)/60
+    //            case .mgMin:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl))
+    //            case .mgHour:
+    //                return (desiredInfusionRate/(solutionConcentrationMgMl))/60
+    //            case .unitsMin:
+    //                return desiredInfusionRate/solutionConcentrationMgMl
+    //            }
+    //        }
+    //
+    //    }
+    
+    static func getInfusionRate(desiredInfusionRate: Double, inputRateMethod: DoseOptions, solutionConcentrationMgMl: Double, patientWeight: Double?, outputRateMethod: InfusionRateOptions) -> Double {
         
         //Solution Concentration must be in mg/ml
-        
-        if outputRateMethod == .mlHour {
-            switch inputRateMethod {
-            case .mcgKgMin:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate*60*safeWeight)/(solutionConcentrationMgMl*1000)
-            case .mcgKgHour:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl*1000)
-            case .mcgMin:
-                return (desiredInfusionRate*60)/(solutionConcentrationMgMl*1000)
-            case .mcgHour:
-                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
-            case .mgKgMin:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate*safeWeight*60)/(solutionConcentrationMgMl)
-            case .mgKgHour:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl)
-            case .mgMin:
-                return (desiredInfusionRate*60)/(solutionConcentrationMgMl)
-            case .mgHour:
-                return (desiredInfusionRate/(solutionConcentrationMgMl))
-            case .unitsMin:
-                return (desiredInfusionRate*60)/solutionConcentrationMgMl
+        print(outputRateMethod)
+        //TODO: correct placeholders
+        switch inputRateMethod {
+        case .pushDose(let pushDoseOptions):
+            switch pushDoseOptions {
+            case .mg:
+                return 988888
+            case .mcg:
+                return 988888
+            case .mgKg:
+                return 988888
+            case .mcgKg:
+                return 988888
+            case .unitsKg:
+                return 988888
+            case .units:
+                return 988888
             }
-        } else {
-            //TODO: Unverified calculations, probably all wrong
-            switch inputRateMethod {
-            case .mcgKgMin:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight
-            case .mcgKgHour:
-                guard let safeWeight = patientWeight else { return 999 }
-                return ((desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight)/60
-            case .mcgMin:
-                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
-            case .mcgHour:
-                return (desiredInfusionRate/(solutionConcentrationMgMl*1000))/60
-            case .mgKgMin:
-                guard let safeWeight = patientWeight else { return 999 }
-                return (desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight
-            case .mgKgHour:
-                guard let safeWeight = patientWeight else { return 999 }
-                return ((desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight)/60
-            case .mgMin:
-                return (desiredInfusionRate/(solutionConcentrationMgMl))
-            case .mgHour:
-                return (desiredInfusionRate/(solutionConcentrationMgMl))/60
-            case .unitsMin:
-                return desiredInfusionRate/solutionConcentrationMgMl
+        case .concentrationDose(let concentrationOptions):
+            if outputRateMethod == .mlHour {
+                switch concentrationOptions {
+                case .mcgKgMin:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate*60*safeWeight)/(solutionConcentrationMgMl*1000)
+                case .mcgKgHour:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl*1000)
+                case .mcgMin:
+                    return (desiredInfusionRate*60)/(solutionConcentrationMgMl*1000)
+                case .mcgHour:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
+                case .mgKgMin:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate*safeWeight*60)/(solutionConcentrationMgMl)
+                case .mgKgHour:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl)
+                case .mgMin:
+                    return (desiredInfusionRate*60)/(solutionConcentrationMgMl)
+                case .mgHour:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl))
+                case .unitsMin:
+                    return (desiredInfusionRate*60)/solutionConcentrationMgMl
+                }
+            } else {
+                switch concentrationOptions {
+                case .mcgKgMin:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate*safeWeight)/(solutionConcentrationMgMl*1000)
+                case .mcgKgHour:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return ((desiredInfusionRate/(solutionConcentrationMgMl*1000))*safeWeight)/60
+                case .mcgMin:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl*1000))
+                case .mcgHour:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl*1000))/60
+                case .mgKgMin:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return (desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight
+                case .mgKgHour:
+                    guard let safeWeight = patientWeight else { return 999 }
+                    return ((desiredInfusionRate/(solutionConcentrationMgMl))*safeWeight)/60
+                case .mgMin:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl))
+                case .mgHour:
+                    return (desiredInfusionRate/(solutionConcentrationMgMl))/60
+                case .unitsMin:
+                    return desiredInfusionRate/solutionConcentrationMgMl
+                }
             }
+            
         }
         
     }
@@ -323,6 +430,48 @@ class InfusionCalculator {
             return .unitsKg
         } else {
             return .units
+        }
+    }
+    
+    static func getDatabaseRateFactor(databaseFactor: Int) -> DoseOptions {
+        if databaseFactor == 110 {
+            
+            return .pushDose(.mcg)
+        } else if databaseFactor == 120 {
+            
+            return .pushDose(.mg)
+        } else if databaseFactor == 210 {
+            
+            return .pushDose(.mcgKg)
+        } else if databaseFactor == 220 {
+            
+            return .pushDose(.mgKg)
+        } else if databaseFactor == 300 {
+            return .pushDose(.units)
+            
+        } else if databaseFactor == 410 {
+            return .pushDose(.unitsKg)
+            
+        } else if databaseFactor == 511 {
+            return .concentrationDose(.mcgMin)
+        } else if databaseFactor == 512 {
+            return .concentrationDose(.mcgHour)
+        } else if databaseFactor == 521 {
+            return .concentrationDose(.mgMin)
+        } else if databaseFactor == 522 {
+            return .concentrationDose(.mgHour)
+        } else if databaseFactor == 611 {
+            return .concentrationDose(.mcgKgMin)
+        } else if databaseFactor == 612 {
+            return .concentrationDose(.mcgKgHour)
+        } else if databaseFactor == 621 {
+            return .concentrationDose(.mgKgMin)
+        } else if databaseFactor == 622 {
+            return .concentrationDose(.mgKgHour)
+        } else if databaseFactor == 710 {
+            return .concentrationDose(.unitsMin)
+        } else {
+            return .pushDose(.units)
         }
     }
 }
